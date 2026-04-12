@@ -5,535 +5,449 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>文章总结卡片生成器</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            color: #0f172a;
+            background:
+                radial-gradient(circle at top left, rgba(99,102,241,.12), transparent 28%),
+                radial-gradient(circle at top right, rgba(139,92,246,.14), transparent 24%),
+                linear-gradient(180deg, #f8faff 0%, #f4f1ff 100%);
             min-height: 100vh;
-            padding: 40px 20px;
+            -webkit-font-smoothing: antialiased;
         }
 
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
+        .container { max-width: 1200px; margin: 0 auto; padding: 2.5rem 1.5rem; }
+
+        /* badge */
+        .badge {
+            display: inline-flex; align-items: center; gap: .5rem;
+            background: rgba(255,255,255,.85); padding: .45rem 1rem;
+            border-radius: 999px; font-size: .8125rem; font-weight: 500;
+            color: #6366f1; box-shadow: 0 1px 3px rgba(0,0,0,.06);
+            border: 1px solid rgba(99,102,241,.15); margin-bottom: 1.75rem;
         }
 
-        .header {
-            text-align: center;
-            margin-bottom: 40px;
+        /* header */
+        .header-grid {
+            display: grid; gap: 1.5rem; margin-bottom: 2.5rem;
+        }
+        @media(min-width:1024px){ .header-grid { grid-template-columns: 1.1fr .9fr; align-items: start; } }
+
+        h1 {
+            font-size: 2.25rem; font-weight: 700; line-height: 1.2; letter-spacing: -.025em; color: #0f172a;
+        }
+        @media(min-width:768px){ h1 { font-size: 2.75rem; } }
+
+        .subtitle { margin-top: .875rem; font-size: 1rem; line-height: 1.75; color: #475569; }
+
+        .tags { display: flex; flex-wrap: wrap; gap: .75rem; margin-top: 1.25rem; }
+        .tag {
+            background: rgba(255,255,255,.8); padding: .4rem .9rem;
+            border-radius: 999px; font-size: .8125rem; color: #475569;
+            box-shadow: 0 1px 2px rgba(0,0,0,.05); border: 1px solid #e2e8f0;
         }
 
-        .header h1 {
-            color: #fff;
-            font-size: 2.5rem;
-            margin-bottom: 10px;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        /* card */
+        .card {
+            background: rgba(255,255,255,.9);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255,255,255,.95);
+            box-shadow: 0 16px 40px -20px rgba(99,102,241,.3);
+            border-radius: 1.25rem;
+            padding: 1.5rem;
         }
 
-        .header p {
-            color: rgba(255,255,255,0.9);
-            font-size: 1.1rem;
+        .grad-wrap {
+            border-radius: 1.25rem;
+            background: linear-gradient(135deg, rgba(99,102,241,.25), rgba(139,92,246,.2), rgba(167,139,250,.25));
+            padding: 1px;
+        }
+        .grad-wrap > .card { border-radius: calc(1.25rem - 1px); }
+
+        /* info box */
+        .info-row { display: flex; align-items: flex-start; gap: 1rem; }
+        .icon-circle {
+            flex-shrink: 0; width: 3rem; height: 3rem;
+            display: flex; align-items: center; justify-content: center;
+            border-radius: 1rem; font-size: 1.375rem;
+            background: linear-gradient(135deg, rgba(99,102,241,.15), rgba(139,92,246,.15));
+        }
+        .info-title { font-size: 1.0625rem; font-weight: 600; color: #0f172a; }
+        .info-text { margin-top: .375rem; font-size: .875rem; line-height: 1.6; color: #475569; }
+
+        /* main layout */
+        .main-grid { display: grid; gap: 1.5rem; align-items: start; }
+        @media(min-width:1280px){ .main-grid { grid-template-columns: 420px 1fr; } }
+
+        .left-col { display: flex; flex-direction: column; gap: 1.25rem; }
+
+        /* input */
+        .field-label {
+            font-size: .8125rem; font-weight: 600; color: #374151; margin-bottom: .5rem;
+        }
+        input[type=url] {
+            width: 100%; padding: .875rem 1rem;
+            border: 1.5px solid #e2e8f0; border-radius: .875rem;
+            font-size: .9375rem; color: #0f172a; background: #fff;
+            outline: none; transition: border-color .2s, box-shadow .2s;
+        }
+        input[type=url]:focus {
+            border-color: #6366f1;
+            box-shadow: 0 0 0 3px rgba(99,102,241,.12);
         }
 
-        .input-section {
-            background: #fff;
-            border-radius: 16px;
-            padding: 30px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-            margin-bottom: 30px;
+        .hint-box {
+            margin-top: .875rem; padding: .625rem .875rem;
+            border: 1px solid #e2e8f0; border-radius: .75rem;
+            background: rgba(255,255,255,.7); font-size: .8rem; color: #64748b; line-height: 1.5;
         }
 
-        .input-group {
-            margin-bottom: 20px;
+        /* buttons */
+        .btn-row { display: flex; gap: .75rem; margin-top: 1.25rem; }
+        .btn {
+            flex: 1; display: flex; align-items: center; justify-content: center;
+            gap: .5rem; padding: .875rem 1.25rem; border-radius: .875rem;
+            font-size: .9375rem; font-weight: 600; cursor: pointer;
+            border: none; transition: all .2s;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            color: #fff; box-shadow: 0 4px 14px rgba(99,102,241,.3);
+        }
+        .btn-primary:hover:not(:disabled) { transform: translateY(-1px); box-shadow: 0 6px 18px rgba(99,102,241,.4); }
+        .btn-primary:disabled { opacity: .6; cursor: not-allowed; }
+        .btn-secondary {
+            background: #fff; color: #64748b;
+            border: 1.5px solid #e2e8f0;
+        }
+        .btn-secondary:hover { background: #f8fafc; border-color: #cbd5e1; }
+
+        /* status */
+        .status-panel {
+            padding: .875rem 1.125rem; border-radius: .875rem;
+            font-size: .875rem; border: 1.5px solid transparent;
+            transition: all .25s;
+        }
+        .status-info    { background: rgba(99,102,241,.07); border-color: rgba(99,102,241,.2); }
+        .status-loading { background: rgba(59,130,246,.07); border-color: rgba(59,130,246,.25); }
+        .status-success { background: rgba(34,197,94,.07);  border-color: rgba(34,197,94,.25); }
+        .status-error   { background: rgba(239,68,68,.07);  border-color: rgba(239,68,68,.25); }
+
+        .status-title { font-weight: 600; margin-bottom: .25rem; color: #1e293b; }
+        .status-msg   { color: #475569; line-height: 1.55; }
+
+        /* result */
+        .result-section { display: none; }
+        .result-section.visible { display: block; }
+
+        .result-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.25rem; }
+        .result-h2 { font-size: 1.0625rem; font-weight: 600; color: #0f172a; }
+        .result-badge {
+            background: rgba(34,197,94,.12); color: #15803d;
+            border: 1px solid rgba(34,197,94,.25);
+            padding: .25rem .75rem; border-radius: 999px; font-size: .75rem; font-weight: 600;
         }
 
-        .input-group label {
-            display: block;
-            margin-bottom: 8px;
-            color: #333;
-            font-weight: 600;
-            font-size: 0.95rem;
+        .preview-frame {
+            background: linear-gradient(135deg, rgba(99,102,241,.07), rgba(139,92,246,.1));
+            border-radius: 1rem; padding: 1.25rem; min-height: 200px;
+            display: flex; align-items: center; justify-content: center;
         }
 
-        .api-status {
-            background: #fff3e0;
-            border-left: 4px solid #ff9800;
-            padding: 12px 16px;
-            margin-bottom: 20px;
-            border-radius: 4px;
-            color: #e65100;
-            font-size: 0.9rem;
-            line-height: 1.5;
+        .empty-state {
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            min-height: 360px; text-align: center; gap: .75rem;
+            border: 1.5px dashed rgba(99,102,241,.25); border-radius: 1rem; padding: 2rem;
         }
+        .empty-icon { font-size: 2.5rem; opacity: .6; }
+        .empty-title { font-weight: 600; color: #334155; }
+        .empty-sub { font-size: .8125rem; color: #94a3b8; line-height: 1.5; }
 
-        .config-section {
-            background: #f8f9fa;
-            border-radius: 8px;
-            padding: 16px;
-            margin-bottom: 20px;
-            border: 1px solid #e9ecef;
+        .result-img-wrap {
+            display: flex; align-items: center; justify-content: center;
+            min-height: 200px; width: 100%;
         }
+        #resultImage { max-width: 100%; max-height: 680px; border-radius: .75rem; box-shadow: 0 8px 28px rgba(0,0,0,.15); }
+        #imageLoadingHint { display: none; flex-direction: column; align-items: center; gap: .75rem; color: #64748b; font-size: .875rem; }
 
-        .config-section summary {
-            cursor: pointer;
-            font-weight: 600;
-            color: #495057;
-            user-select: none;
+        .url-row {
+            margin-top: 1rem; padding: .75rem 1rem;
+            background: rgba(255,255,255,.65); border: 1px solid #e2e8f0;
+            border-radius: .75rem; font-size: .8125rem; color: #475569;
         }
+        .url-label { font-weight: 600; margin-bottom: .375rem; color: #374151; }
+        .url-text { word-break: break-all; color: #6366f1; }
 
-        .config-section[open] summary {
-            margin-bottom: 16px;
+        .action-row { display: flex; gap: .75rem; margin-top: .875rem; }
+        .btn-action {
+            flex: 1; display: flex; align-items: center; justify-content: center;
+            gap: .5rem; padding: .75rem 1rem; border-radius: .875rem;
+            font-size: .875rem; font-weight: 600; cursor: pointer;
+            border: 1.5px solid #e2e8f0; background: #fff; color: #6366f1;
+            text-decoration: none; transition: all .2s;
         }
-
-        .config-section .hint {
-            color: #868e96;
-            font-weight: normal;
-            font-size: 0.85rem;
+        .btn-action:hover { background: #f8fafc; border-color: #6366f1; }
+        .btn-action-dl {
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            color: #fff; border-color: transparent;
+            box-shadow: 0 3px 10px rgba(99,102,241,.25);
         }
+        .btn-action-dl:hover { transform: translateY(-1px); box-shadow: 0 5px 14px rgba(99,102,241,.35); }
 
-        .input-group input {
-            width: 100%;
-            padding: 14px 18px;
-            border: 2px solid #e0e0e0;
-            border-radius: 10px;
-            font-size: 1rem;
-            transition: all 0.3s ease;
-        }
+        .hidden { display: none !important; }
 
-        .input-group input:focus {
-            outline: none;
-            border-color: #667eea;
-        }
-
-        .input-group input::placeholder {
-            color: #aaa;
-        }
-
-        .btn-generate {
-            width: 100%;
-            padding: 16px 24px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: #fff;
-            border: none;
-            border-radius: 10px;
-            font-size: 1.1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-        }
-
-        .btn-generate:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
-        }
-
-        .btn-generate:disabled {
-            opacity: 0.7;
-            cursor: not-allowed;
-            transform: none;
-        }
-
-        .btn-generate .spinner {
-            width: 20px;
-            height: 20px;
-            border: 2px solid rgba(255,255,255,0.3);
-            border-top-color: #fff;
-            border-radius: 50%;
-            animation: spin 0.8s linear infinite;
-            display: none;
-        }
-
-        .btn-generate.loading .spinner {
-            display: block;
-        }
-
-        .btn-generate.loading .btn-text {
-            display: none;
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-
-        .result-section {
-            background: #fff;
-            border-radius: 16px;
-            padding: 30px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-            display: none;
-        }
-
-        .result-section.show {
-            display: block;
-            animation: fadeIn 0.5s ease;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .result-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 20px;
-        }
-
-        .result-header h2 {
-            color: #333;
-            font-size: 1.3rem;
-        }
-
-        .btn-download {
-            padding: 10px 20px;
-            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
-            color: #fff;
-            border: none;
-            border-radius: 8px;
-            font-size: 0.95rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .btn-download:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(17, 153, 142, 0.3);
-        }
-
-        .image-container {
-            border-radius: 12px;
-            overflow: hidden;
-            background: #f5f5f5;
-            min-height: 200px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .image-container img {
-            max-width: 100%;
-            height: auto;
-            display: block;
-        }
-
-        .image-placeholder {
-            color: #999;
-            font-size: 1rem;
-        }
-
-        .error-message {
-            background: #ffebee;
-            color: #c62828;
-            padding: 16px 20px;
-            border-radius: 10px;
-            margin-top: 20px;
-            display: none;
-            align-items: flex-start;
-            gap: 10px;
-            white-space: pre-line;
-            line-height: 1.6;
-        }
-
-        .error-message.show {
-            display: flex;
-        }
-
-        .success-message {
-            background: #e8f5e9;
-            color: #2e7d32;
-            padding: 16px 20px;
-            border-radius: 10px;
-            margin-top: 20px;
-            display: none;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .success-message.show {
-            display: flex;
-        }
-
-        .icon {
-            width: 20px;
-            height: 20px;
-            flex-shrink: 0;
-        }
-
-        @media (max-width: 600px) {
-            .header h1 {
-                font-size: 1.8rem;
-            }
-
-            .input-section, .result-section {
-                padding: 20px;
-            }
-
-            .result-header {
-                flex-direction: column;
-                gap: 15px;
-                align-items: flex-start;
-            }
-        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .spin { display: inline-block; animation: spin .8s linear infinite; }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="header">
+<div class="container">
+
+    <!-- header -->
+    <div class="badge">✨ AI 工作流工具页</div>
+    <div class="header-grid">
+        <div>
             <h1>文章总结卡片生成器</h1>
-            <p>输入文章链接，自动生成精美的总结卡片</p>
-        </div>
-
-        <div class="input-section">
-            <div class="api-status" id="apiStatus">
-                <strong>⚠️ 重要提示：</strong>如果提示 401 错误，请在下方 "API 配置" 中填入新的 Token。
-            </div>
-
-            <details class="config-section">
-                <summary>⚙️ API 配置（点击展开）</summary>
-                <div class="input-group">
-                    <label for="apiToken">API Token <span class="hint">从 Coze 平台获取</span></label>
-                    <input type="password" id="apiToken" placeholder="输入你的 Coze API Token">
-                </div>
-                <div class="input-group">
-                    <label for="workflowId">Workflow ID</label>
-                    <input type="text" id="workflowId" value="7627780230593364003" placeholder="工作流ID">
-                </div>
-            </details>
-
-            <div class="input-group">
-                <label for="articleUrl">文章链接</label>
-                <input
-                    type="url"
-                    id="articleUrl"
-                    placeholder="请输入文章链接，例如：https://www.weiyong.wang"
-                    required
-                >
-            </div>
-            <button class="btn-generate" id="generateBtn" onclick="generateCard()">
-                <span class="spinner"></span>
-                <span class="btn-text">生成卡片</span>
-            </button>
-            <div class="error-message" id="errorMessage">
-                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <circle cx="12" cy="12" r="10"></circle>
-                    <line x1="12" y1="8" x2="12" y2="12"></line>
-                    <line x1="12" y1="16" x2="12.01" y2="16"></line>
-                </svg>
-                <span id="errorText"></span>
+            <p class="subtitle">输入文章链接，一键调用工作流接口，自动提取并展示生成的图片卡片。</p>
+            <div class="tags">
+                <span class="tag">已内置 API 配置</span>
+                <span class="tag">输入链接即可体验</span>
             </div>
         </div>
-
-        <div class="result-section" id="resultSection">
-            <div class="result-header">
-                <h2>生成的卡片</h2>
-                <button class="btn-download" id="downloadBtn" onclick="downloadImage()">
-                    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                        <polyline points="7 10 12 15 17 10"></polyline>
-                        <line x1="12" y1="15" x2="12" y2="3"></line>
-                    </svg>
-                    下载图片
-                </button>
-            </div>
-            <div class="image-container" id="imageContainer">
-                <span class="image-placeholder">图片加载中...</span>
-            </div>
-            <div class="success-message" id="successMessage">
-                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
-                    <polyline points="22 4 12 14.01 9 11.01"></polyline>
-                </svg>
-                <span>卡片生成成功！</span>
+        <div class="grad-wrap">
+            <div class="card">
+                <div class="info-row">
+                    <div class="icon-circle">🪄</div>
+                    <div>
+                        <div class="info-title">使用说明</div>
+                        <div class="info-text">页面已内置接口参数，粘贴文章链接后直接点击"生成卡片"即可。生成通常需要几十秒，请耐心等待。</div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 
-    <script>
-        // API 配置
-        const API_URL = 'https://api.coze.cn/v1/workflow/run';
-        const API_TOKEN = 'cztei_lLp8a8FjDLTzCoxxuGNbAc2Wsb6rMHRMr3UOi1A4EbhX8uwCQ2oUJ3WNbfpP9BJB1';
-        const WORKFLOW_ID = '7627780230593364003';
+    <!-- main -->
+    <div class="main-grid">
+        <!-- left -->
+        <div class="left-col">
+            <div class="grad-wrap">
+                <div class="card">
+                    <div class="field-label">文章链接</div>
+                    <input
+                        id="articleInput"
+                        type="url"
+                        placeholder="例如：https://www.weiyong.wang"
+                    >
+                    <div class="hint-box">链接将作为 <code>input</code> 参数发送给工作流接口。</div>
+                    <div class="btn-row">
+                        <button id="generateButton" class="btn btn-primary">
+                            <span id="generateIcon">▶</span>
+                            <span id="generateText">生成卡片</span>
+                        </button>
+                        <button id="resetButton" class="btn btn-secondary">
+                            <span>✕</span>
+                            <span>清空</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
 
-        let currentImageUrl = '';
+            <div id="statusPanel" class="status-panel status-info">
+                <div class="status-title">等待输入</div>
+                <div id="statusMsg" class="status-msg">请输入文章链接，然后点击"生成卡片"。</div>
+            </div>
+        </div>
 
-        // 生成卡片
-        async function generateCard() {
-            const input = document.getElementById('articleUrl').value.trim();
-            const tokenInput = document.getElementById('apiToken').value.trim();
-            const workflowInput = document.getElementById('workflowId').value.trim();
+        <!-- right -->
+        <div class="grad-wrap">
+            <div class="card">
+                <div class="result-header">
+                    <div class="result-h2">生成结果</div>
+                    <div id="resultBadge" class="result-badge hidden">✓ 已生成</div>
+                </div>
 
-            const generateBtn = document.getElementById('generateBtn');
-            const errorMessage = document.getElementById('errorMessage');
-            const resultSection = document.getElementById('resultSection');
+                <!-- empty -->
+                <div id="emptyState" class="empty-state">
+                    <div class="empty-icon">🖼</div>
+                    <div class="empty-title">还没有生成图片</div>
+                    <div class="empty-sub">生成成功后，会自动从 <code>data.output</code> 提取图片地址并在这里展示。</div>
+                </div>
 
-            // 使用输入的 Token 或默认 Token
-            const token = tokenInput || API_TOKEN;
-            const workflowId = workflowInput || WORKFLOW_ID;
+                <!-- result -->
+                <div id="resultPanel" class="hidden">
+                    <div class="preview-frame">
+                        <div class="result-img-wrap">
+                            <div id="imageLoadingHint">
+                                <span class="spin" style="font-size:1.5rem;">⏳</span>
+                                <span>图片加载中…</span>
+                            </div>
+                            <img id="resultImage" class="hidden" alt="生成的文章总结卡片">
+                        </div>
+                    </div>
+                    <div class="url-row">
+                        <div class="url-label">图片地址</div>
+                        <div id="imageUrlText" class="url-text"></div>
+                    </div>
+                    <div class="action-row">
+                        <a id="openImageLink" href="#" target="_blank" rel="noopener noreferrer" class="btn-action">↗ 新窗口打开</a>
+                        <a id="downloadLink" href="#" download="summary-card.png" class="btn-action btn-action-dl">⬇ 下载图片</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
-            // 验证输入
-            if (!input) {
-                showError('请输入文章链接');
-                return;
-            }
+</div>
 
-            if (!token) {
-                showError('请输入 API Token');
-                return;
-            }
+<script>
+    const API_ENDPOINT      = 'https://api.coze.cn/v1/workflow/run';
+    const DEFAULT_WORKFLOW_ID = '7617481590503063578';
+    const API_TOKEN         = 'cztei_h4pbVI0fDGmmxnXA0fQdh2XhKQtUYQdzQBUvHRsXQ4BJCOEqHbACNqxGAw2RqilH8';
 
-            // 隐藏之前的错误和结果
-            hideError();
-            resultSection.classList.remove('show');
+    const articleInput    = document.getElementById('articleInput');
+    const generateButton  = document.getElementById('generateButton');
+    const generateIcon    = document.getElementById('generateIcon');
+    const generateText    = document.getElementById('generateText');
+    const resetButton     = document.getElementById('resetButton');
+    const statusPanel     = document.getElementById('statusPanel');
+    const statusMsg       = document.getElementById('statusMsg');
+    const emptyState      = document.getElementById('emptyState');
+    const resultPanel     = document.getElementById('resultPanel');
+    const resultBadge     = document.getElementById('resultBadge');
+    const resultImage     = document.getElementById('resultImage');
+    const imageLoadingHint= document.getElementById('imageLoadingHint');
+    const imageUrlText    = document.getElementById('imageUrlText');
+    const openImageLink   = document.getElementById('openImageLink');
+    const downloadLink    = document.getElementById('downloadLink');
 
-            // 设置加载状态
-            generateBtn.classList.add('loading');
-            generateBtn.disabled = true;
+    function setStatus(type, title, msg) {
+        statusPanel.className = 'status-panel status-' + type;
+        statusPanel.querySelector('.status-title').textContent = title;
+        statusMsg.textContent = msg;
+    }
 
-            console.log('使用 Token:', token.substring(0, 20) + '...');
-            console.log('使用 Workflow ID:', workflowId);
+    function resetResult() {
+        emptyState.classList.remove('hidden');
+        resultPanel.classList.add('hidden');
+        resultBadge.classList.add('hidden');
+        resultImage.classList.add('hidden');
+        resultImage.removeAttribute('src');
+        imageLoadingHint.style.display = 'none';
+        imageUrlText.textContent = '';
+        openImageLink.href = '#';
+        downloadLink.href = '#';
+    }
 
-            try {
-                const response = await fetch(API_URL, {
-                    method: 'POST',
-                    headers: {
-                        'Authorization': `Bearer ${token}`,
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        workflow_id: workflowId,
-                        parameters: {
-                            input: input
-                        }
-                    })
-                });
+    function showResult(url) {
+        emptyState.classList.add('hidden');
+        resultPanel.classList.remove('hidden');
+        resultBadge.classList.remove('hidden');
+        imageUrlText.textContent = url;
+        openImageLink.href = url;
+        const date = new Date();
+        const ds = `${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,'0')}-${String(date.getDate()).padStart(2,'0')}`;
+        downloadLink.href = url;
+        downloadLink.download = `summary-card-${ds}.png`;
+        imageLoadingHint.style.display = 'flex';
+        resultImage.classList.add('hidden');
+        resultImage.src = url;
+    }
 
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
+    function setGenerating(on) {
+        generateButton.disabled = on;
+        generateIcon.textContent = on ? '' : '▶';
+        generateIcon.className = on ? 'spin' : '';
+        generateText.textContent = on ? '生成中...' : '生成卡片';
+    }
 
-                const data = await response.json();
-                console.log('API Response:', data);
-
-                // 检查响应码
-                if (data.code !== 0) {
-                    throw new Error(data.msg || 'API 调用失败');
-                }
-
-                // 解析 data 字段（JSON 字符串）
-                let parsedData;
-                try {
-                    parsedData = JSON.parse(data.data);
-                } catch (e) {
-                    throw new Error('解析响应数据失败');
-                }
-
-                // 获取图片 URL
-                const imageUrl = parsedData.output;
-                if (!imageUrl) {
-                    throw new Error('未找到图片 URL');
-                }
-
-                currentImageUrl = imageUrl;
-
-                // 显示结果
-                displayImage(imageUrl);
-                resultSection.classList.add('show');
-                showSuccess();
-
-            } catch (error) {
-                console.error('Error:', error);
-                let errorMsg = error.message;
-
-                // 详细的错误提示
-                if (error.message.includes('401')) {
-                    errorMsg = '授权失败 (401)\n\n可能原因：\n1. Token 已过期 - 请在 Coze 平台重新生成\n2. Token 格式错误 - 确保完整复制\n3. 工作流未授权 - 检查 Token 是否有权限访问此工作流\n4. 域名白名单 - Coze 可能需要添加你的网站域名\n\n当前使用的 Token 前20位: ' + (token ? token.substring(0, 20) + '...' : '空');
-                } else if (error.message.includes('CORS') || error.message.includes('Failed to fetch')) {
-                    errorMsg = '跨域请求被阻止。Coze API 可能不允许前端直接调用，建议使用后端代理。';
-                } else if (error.message.includes('404')) {
-                    errorMsg = '工作流未找到 (404)：请检查 workflow_id 是否正确';
-                }
-
-                showError('生成失败：' + errorMsg);
-            } finally {
-                // 移除加载状态
-                generateBtn.classList.remove('loading');
-                generateBtn.disabled = false;
-            }
+    async function generateCard() {
+        const val = articleInput.value.trim();
+        if (!val) {
+            setStatus('error', '缺少链接', '请输入文章链接后再生成。');
+            articleInput.focus();
+            return;
+        }
+        try { new URL(val); } catch {
+            setStatus('error', '链接格式不正确', '请输入完整的 URL，例如 https://www.weiyong.wang');
+            articleInput.focus();
+            return;
         }
 
-        // 显示图片
-        function displayImage(url) {
-            const container = document.getElementById('imageContainer');
-            container.innerHTML = `<img src="${url}" alt="生成的卡片" onload="this.style.opacity=1" style="opacity:0;transition:opacity 0.3s">`;
-        }
+        setGenerating(true);
+        setStatus('loading', '生成中', '已发起工作流请求，正在等待接口返回…');
+        resetResult();
 
-        // 下载图片
-        async function downloadImage() {
-            if (!currentImageUrl) {
-                showError('没有可下载的图片');
-                return;
+        try {
+            const res = await fetch(API_ENDPOINT, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${API_TOKEN}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    workflow_id: DEFAULT_WORKFLOW_ID,
+                    parameters: { input: val }
+                })
+            });
+
+            if (!res.ok) {
+                let msg = `HTTP ${res.status}`;
+                try { const d = await res.json(); if (d.msg) msg = d.msg; } catch {}
+                throw new Error('请求失败：' + msg);
             }
 
-            try {
-                const response = await fetch(currentImageUrl);
-                const blob = await response.blob();
-                const url = window.URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = `文章总结卡片_${new Date().getTime()}.png`;
-                document.body.appendChild(a);
-                a.click();
-                document.body.removeChild(a);
-                window.URL.revokeObjectURL(url);
-            } catch (error) {
-                // 如果下载失败，直接在新标签页打开
-                window.open(currentImageUrl, '_blank');
+            const result = await res.json();
+
+            if (result.code !== 0) {
+                throw new Error(result.msg || `接口异常，code=${result.code}`);
             }
-        }
-
-        // 显示错误信息
-        function showError(message) {
-            const errorMessage = document.getElementById('errorMessage');
-            const errorText = document.getElementById('errorText');
-            errorText.textContent = message;
-            errorMessage.classList.add('show');
-        }
-
-        // 隐藏错误信息
-        function hideError() {
-            const errorMessage = document.getElementById('errorMessage');
-            errorMessage.classList.remove('show');
-        }
-
-        // 显示成功信息
-        function showSuccess() {
-            const successMessage = document.getElementById('successMessage');
-            successMessage.classList.add('show');
-            setTimeout(() => {
-                successMessage.classList.remove('show');
-            }, 3000);
-        }
-
-        // 监听回车键
-        document.getElementById('articleUrl').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                generateCard();
+            if (!result.data || typeof result.data !== 'string') {
+                throw new Error('接口返回成功，但 data 字段为空或格式不正确。');
             }
-        });
-    </script>
+
+            let parsed;
+            try { parsed = JSON.parse(result.data); } catch {
+                throw new Error('data 字段不是合法的 JSON 字符串。');
+            }
+
+            if (!parsed.output || typeof parsed.output !== 'string') {
+                throw new Error('解析成功，但没有找到 output 图片地址。');
+            }
+
+            const imageUrl = parsed.output.trim();
+            new URL(imageUrl); // validate
+            showResult(imageUrl);
+            setStatus('success', '生成成功', '已获取图片，可在右侧预览，也可直接下载。');
+
+        } catch (err) {
+            setStatus('error', '生成失败', err instanceof Error ? err.message : String(err));
+        } finally {
+            setGenerating(false);
+        }
+    }
+
+    generateButton.addEventListener('click', generateCard);
+    articleInput.addEventListener('keydown', e => {
+        if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') { e.preventDefault(); generateCard(); }
+    });
+    resetButton.addEventListener('click', () => {
+        articleInput.value = '';
+        resetResult();
+        setStatus('info', '已清空', '请重新输入文章链接。');
+        articleInput.focus();
+    });
+
+    resultImage.addEventListener('load', () => {
+        imageLoadingHint.style.display = 'none';
+        resultImage.classList.remove('hidden');
+    });
+    resultImage.addEventListener('error', () => {
+        imageLoadingHint.style.display = 'none';
+        setStatus('error', '图片加载失败', '已拿到图片地址，但浏览器无法加载。可点击"新窗口打开"检查链接是否可访问。');
+    });
+</script>
 </body>
 </html>

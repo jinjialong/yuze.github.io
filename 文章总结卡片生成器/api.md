@@ -10,7 +10,7 @@
 ## 请求参数
 
 curl -X POST 'https://api.coze.cn/v1/workflow/run' \
--H "Authorization: Bearer cztei_lLp8a8FjDLTzCoxxuGNbAc2Wsb6rMHRMr3UOi1A4EbhX8uwCQ2oUJ3WNbfpP9BJB1" \
+-H "Authorization: Bearer cztei_qB2Sf3fW2jleMSapL5YSOJypc4rsuuWOyETzOlQzAM9RimvqUMS4WN8gR3QHYyGZK" \
 -H "Content-Type: application/json" \
 -d '{
   "workflow_id": "7627780230593364003",
