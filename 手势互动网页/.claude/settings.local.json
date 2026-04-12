@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python:*)",
+      "Bash(curl -s http://localhost:8080/手势互动网页/)",
+      "Bash(curl -s \"http://localhost:8080/%E6%89%8B%E5%8A%BF%E4%BA%92%E5%8A%A8%E7%BD%91%E9%A1%B5/\")"
+    ]
+  }
+}

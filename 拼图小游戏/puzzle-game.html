@@ -1,0 +1,793 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>拼图小游戏</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#6366f1',
+                        secondary: '#8b5cf6',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        }
+
+        .puzzle-piece {
+            position: relative;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            overflow: hidden;
+            border-radius: 4px;
+        }
+
+        .puzzle-piece:hover {
+            transform: scale(1.02);
+            box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.4);
+            z-index: 10;
+        }
+
+        .puzzle-piece.selected {
+            box-shadow: 0 0 0 4px #6366f1, 0 10px 30px -5px rgba(99, 102, 241, 0.5);
+            transform: scale(1.05);
+            z-index: 20;
+        }
+
+        .puzzle-piece.correct {
+            box-shadow: inset 0 0 0 3px #10b981;
+        }
+
+        .puzzle-grid {
+            display: grid;
+            gap: 2px;
+            padding: 3px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+            margin: 0 auto;
+        }
+
+        .timer-display {
+            font-variant-numeric: tabular-nums;
+        }
+
+        .share-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 20px;
+            overflow: hidden;
+        }
+
+        .upload-area {
+            border: 2px dashed #cbd5e1;
+            transition: all 0.3s ease;
+        }
+
+        .upload-area:hover {
+            border-color: #6366f1;
+            background: rgba(99, 102, 241, 0.05);
+        }
+
+        .upload-area.has-image {
+            border-style: solid;
+            border-color: #10b981;
+        }
+
+        @keyframes celebrate {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .celebrate {
+            animation: celebrate 0.5s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .animate-fade-in {
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        .difficulty-btn {
+            transition: all 0.2s ease;
+        }
+
+        .difficulty-btn.active {
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            color: white;
+            transform: scale(1.05);
+            border-color: transparent;
+        }
+
+        .difficulty-btn:hover:not(.active) {
+            background: rgba(99, 102, 241, 0.1);
+        }
+
+        .spinner {
+            border: 3px solid rgba(99, 102, 241, 0.3);
+            border-top-color: #6366f1;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            animation: spin 0.8s linear infinite;
+            display: inline-block;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* 开始按钮样式 */
+        .btn-start {
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            color: white;
+            font-weight: 600;
+            box-shadow: 0 10px 25px -5px rgba(99, 102, 241, 0.4);
+        }
+
+        .btn-start:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 30px -5px rgba(99, 102, 241, 0.5);
+        }
+
+        .btn-start:disabled {
+            background: #cbd5e1;
+            color: #94a3b8;
+            box-shadow: none;
+            cursor: not-allowed;
+        }
+    </style>
+</head>
+<body class="min-h-screen py-6 px-4">
+    <div class="max-w-6xl mx-auto">
+        <!-- Header -->
+        <div class="text-center mb-6">
+            <h1 class="text-3xl md:text-4xl font-bold text-white mb-2">
+                <i class="fas fa-puzzle-piece mr-3"></i>拼图小游戏
+            </h1>
+            <p class="text-white/80 text-sm">上传图片，选择难度，开始挑战！</p>
+        </div>
+
+        <div class="grid lg:grid-cols-3 gap-4">
+            <!-- Left Panel: Settings -->
+            <div class="glass-panel p-5 h-fit">
+                <h2 class="text-lg font-semibold text-gray-800 mb-4">
+                    <i class="fas fa-cog text-primary mr-2"></i>游戏设置
+                </h2>
+
+                <!-- Image Upload -->
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">选择图片</label>
+                    <div class="upload-area rounded-xl p-4 text-center cursor-pointer" id="uploadArea">
+                        <input type="file" id="imageInput" accept="image/*" class="hidden">
+                        <div id="uploadPlaceholder">
+                            <i class="fas fa-cloud-upload-alt text-3xl text-gray-400 mb-2"></i>
+                            <p class="text-gray-500 text-sm">点击上传或拖拽图片</p>
+                            <p class="text-gray-400 text-xs mt-1">建议尺寸 1200px 以内</p>
+                        </div>
+                        <img id="previewImage" class="hidden w-full h-32 object-cover rounded-lg">
+                        <button id="changeImageBtn" class="hidden mt-2 text-xs text-primary hover:underline">更换图片</button>
+                    </div>
+                </div>
+
+                <!-- Difficulty Selection -->
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">选择难度</label>
+                    <div class="grid grid-cols-2 gap-2">
+                        <button class="difficulty-btn px-3 py-2 rounded-xl border border-gray-200 text-sm font-medium" data-rows="3" data-cols="3">
+                            3 × 3
+                            <span class="block text-xs text-gray-400 mt-1">入门</span>
+                        </button>
+                        <button class="difficulty-btn px-3 py-2 rounded-xl border border-gray-200 text-sm font-medium" data-rows="3" data-cols="4">
+                            3 × 4
+                            <span class="block text-xs text-gray-400 mt-1">简单</span>
+                        </button>
+                        <button class="difficulty-btn px-3 py-2 rounded-xl border border-gray-200 text-sm font-medium active" data-rows="4" data-cols="4">
+                            4 × 4
+                            <span class="block text-xs text-gray-400 mt-1">中等</span>
+                        </button>
+                        <button class="difficulty-btn px-3 py-2 rounded-xl border border-gray-200 text-sm font-medium" data-rows="4" data-cols="5">
+                            4 × 5
+                            <span class="block text-xs text-gray-400 mt-1">困难</span>
+                        </button>
+                        <button class="difficulty-btn px-3 py-2 rounded-xl border border-gray-200 text-sm font-medium" data-rows="5" data-cols="5">
+                            5 × 5
+                            <span class="block text-xs text-gray-400 mt-1">专家</span>
+                        </button>
+                        <button class="difficulty-btn px-3 py-2 rounded-xl border border-gray-200 text-sm font-medium" data-rows="6" data-cols="6">
+                            6 × 6
+                            <span class="block text-xs text-gray-400 mt-1">大师</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Start Button -->
+                <button id="startBtn" class="w-full py-3 btn-start rounded-xl text-base transition-all disabled:transform-none" disabled>
+                    <i class="fas fa-play mr-2"></i>开始游戏
+                </button>
+
+                <!-- Game Stats -->
+                <div id="gameStats" class="mt-4 hidden">
+                    <div class="flex items-center justify-between p-3 bg-gray-50 rounded-xl">
+                        <div class="text-center flex-1">
+                            <p class="text-xs text-gray-500 mb-1">时间</p>
+                            <p class="text-xl font-bold text-gray-800 timer-display" id="timer">00:00</p>
+                        </div>
+                        <div class="h-8 w-px bg-gray-200"></div>
+                        <div class="text-center flex-1">
+                            <p class="text-xs text-gray-500 mb-1">步数</p>
+                            <p class="text-xl font-bold text-gray-800" id="moves">0</p>
+                        </div>
+                        <div class="h-8 w-px bg-gray-200"></div>
+                        <div class="text-center flex-1">
+                            <p class="text-xs text-gray-500 mb-1">进度</p>
+                            <p class="text-xl font-bold text-primary" id="progress">0%</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Control Buttons -->
+                <div id="controlBtns" class="mt-3 hidden space-y-2">
+                    <button id="hintBtn" class="w-full py-2 border border-gray-300 text-gray-700 rounded-xl hover:bg-gray-50 transition-colors text-sm">
+                        <i class="fas fa-eye mr-2"></i>按住查看原图
+                    </button>
+                    <button id="resetBtn" class="w-full py-2 border border-red-300 text-red-600 rounded-xl hover:bg-red-50 transition-colors text-sm">
+                        <i class="fas fa-redo mr-2"></i>重新开始
+                    </button>
+                </div>
+            </div>
+
+            <!-- Center/Right: Game Board -->
+            <div class="lg:col-span-2">
+                <div class="glass-panel p-4 min-h-[500px] flex flex-col justify-center items-center">
+                    <div id="gamePlaceholder" class="text-center text-gray-400">
+                        <i class="fas fa-image text-5xl mb-3"></i>
+                        <p class="text-sm">上传图片并选择难度后点击开始</p>
+                    </div>
+
+                    <div id="gameBoard" class="hidden">
+                        <div class="puzzle-grid" id="puzzleGrid"></div>
+                    </div>
+
+                    <!-- Hint Overlay -->
+                    <div id="hintOverlay" class="hidden fixed inset-0 z-50 bg-black/80 flex items-center justify-center">
+                        <div class="relative max-w-2xl max-h-[90vh] p-4">
+                            <img id="hintImage" class="max-w-full max-h-[70vh] rounded-xl shadow-2xl">
+                            <p class="text-white text-center mt-3 text-sm">松开按钮继续游戏</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Win Modal -->
+    <div id="winModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
+        <div class="bg-white rounded-3xl p-6 max-w-sm w-full animate-fade-in">
+            <div class="text-center mb-4">
+                <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                    <i class="fas fa-trophy text-3xl text-green-500"></i>
+                </div>
+                <h2 class="text-xl font-bold text-gray-800">恭喜完成！</h2>
+                <p class="text-gray-500 mt-1 text-sm">你已成功完成拼图挑战</p>
+            </div>
+
+            <div class="share-card p-4 mb-4">
+                <div class="bg-white/20 backdrop-blur rounded-xl p-3">
+                    <img id="shareImage" class="w-full h-28 object-cover rounded-lg mb-3">
+                    <div class="text-white text-center">
+                        <p class="text-xs opacity-80 mb-1">难度</p>
+                        <p class="text-lg font-bold mb-2" id="shareDifficulty">4 × 4</p>
+                        <p class="text-xs opacity-80 mb-1">完成时间</p>
+                        <p class="text-2xl font-bold timer-display" id="shareTime">00:00</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="space-y-2">
+                <button id="shareBtn" class="w-full py-2.5 bg-gradient-to-r from-primary to-secondary text-white rounded-xl font-semibold hover:shadow-lg transition-all text-sm">
+                    <i class="fas fa-share-alt mr-2"></i>分享成绩
+                </button>
+                <button id="playAgainBtn" class="w-full py-2.5 border border-gray-300 text-gray-700 rounded-xl hover:bg-gray-50 transition-colors text-sm">
+                    再玩一次
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Game State
+        let gameState = {
+            image: null,
+            imageWidth: 0,
+            imageHeight: 0,
+            aspectRatio: 1,
+            rows: 4,
+            cols: 4,
+            pieces: [],
+            selectedPiece: null,
+            moves: 0,
+            startTime: null,
+            timerInterval: null,
+            isPlaying: false
+        };
+
+        // DOM Elements
+        const uploadArea = document.getElementById('uploadArea');
+        const imageInput = document.getElementById('imageInput');
+        const previewImage = document.getElementById('previewImage');
+        const uploadPlaceholder = document.getElementById('uploadPlaceholder');
+        const changeImageBtn = document.getElementById('changeImageBtn');
+        const startBtn = document.getElementById('startBtn');
+        const gameBoard = document.getElementById('gameBoard');
+        const gamePlaceholder = document.getElementById('gamePlaceholder');
+        const puzzleGrid = document.getElementById('puzzleGrid');
+        const gameStats = document.getElementById('gameStats');
+        const controlBtns = document.getElementById('controlBtns');
+        const timer = document.getElementById('timer');
+        const moves = document.getElementById('moves');
+        const progress = document.getElementById('progress');
+        const winModal = document.getElementById('winModal');
+        const hintBtn = document.getElementById('hintBtn');
+        const hintOverlay = document.getElementById('hintOverlay');
+        const hintImage = document.getElementById('hintImage');
+        const resetBtn = document.getElementById('resetBtn');
+
+        // Difficulty Selection
+        document.querySelectorAll('.difficulty-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.difficulty-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                gameState.rows = parseInt(btn.dataset.rows);
+                gameState.cols = parseInt(btn.dataset.cols);
+            });
+        });
+
+        // Image Upload
+        uploadArea.addEventListener('click', (e) => {
+            if (e.target !== changeImageBtn && !changeImageBtn.contains(e.target)) {
+                imageInput.click();
+            }
+        });
+
+        changeImageBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            imageInput.click();
+        });
+
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            uploadArea.style.borderColor = '#6366f1';
+        });
+
+        uploadArea.addEventListener('dragleave', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            uploadArea.style.borderColor = gameState.image ? '#10b981' : '#cbd5e1';
+        });
+
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            uploadArea.style.borderColor = gameState.image ? '#10b981' : '#cbd5e1';
+            const file = e.dataTransfer.files[0];
+            if (file && file.type.startsWith('image/')) {
+                handleImage(file);
+            }
+        });
+
+        imageInput.addEventListener('change', (e) => {
+            if (e.target.files[0]) {
+                handleImage(e.target.files[0]);
+            }
+        });
+
+        function handleImage(file) {
+            if (file.size > 10 * 1024 * 1024) {
+                alert('图片太大啦！请选择小于 10MB 的图片');
+                return;
+            }
+
+            uploadPlaceholder.innerHTML = '<div class="spinner"></div><p class="text-gray-500 text-sm mt-2">加载中...</p>';
+
+            const reader = new FileReader();
+
+            reader.onload = (e) => {
+                const img = new Image();
+                img.onload = () => {
+                    // 保存原始图片比例
+                    gameState.imageWidth = img.width;
+                    gameState.imageHeight = img.height;
+                    gameState.aspectRatio = img.width / img.height;
+
+                    // 压缩图片
+                    const canvas = document.createElement('canvas');
+                    const ctx = canvas.getContext('2d');
+
+                    const maxSize = 1200;
+                    let width = img.width;
+                    let height = img.height;
+
+                    if (width > maxSize || height > maxSize) {
+                        if (width > height) {
+                            height = (height / width) * maxSize;
+                            width = maxSize;
+                        } else {
+                            width = (width / height) * maxSize;
+                            height = maxSize;
+                        }
+                    }
+
+                    canvas.width = width;
+                    canvas.height = height;
+                    ctx.drawImage(img, 0, 0, width, height);
+
+                    gameState.image = canvas.toDataURL('image/jpeg', 0.9);
+
+                    previewImage.src = gameState.image;
+                    previewImage.classList.remove('hidden');
+                    uploadPlaceholder.classList.add('hidden');
+                    changeImageBtn.classList.remove('hidden');
+                    uploadArea.classList.add('has-image');
+                    startBtn.disabled = false;
+
+                    uploadPlaceholder.innerHTML = `
+                        <i class="fas fa-cloud-upload-alt text-3xl text-gray-400 mb-2"></i>
+                        <p class="text-gray-500 text-sm">点击上传或拖拽图片</p>
+                        <p class="text-gray-400 text-xs mt-1">建议尺寸 1200px 以内</p>
+                    `;
+                };
+
+                img.onerror = () => {
+                    alert('图片加载失败，请尝试其他图片');
+                    resetUploadArea();
+                };
+
+                img.src = e.target.result;
+            };
+
+            reader.onerror = () => {
+                alert('读取图片失败，请重试');
+                resetUploadArea();
+            };
+
+            reader.readAsDataURL(file);
+        }
+
+        function resetUploadArea() {
+            uploadPlaceholder.innerHTML = `
+                <i class="fas fa-cloud-upload-alt text-3xl text-gray-400 mb-2"></i>
+                <p class="text-gray-500 text-sm">点击上传或拖拽图片</p>
+                <p class="text-gray-400 text-xs mt-1">建议尺寸 1200px 以内</p>
+            `;
+        }
+
+        // Start Game
+        startBtn.addEventListener('click', startGame);
+
+        function startGame() {
+            if (!gameState.image) return;
+
+            gameState.isPlaying = true;
+            gameState.moves = 0;
+            gameState.selectedPiece = null;
+
+            gamePlaceholder.classList.add('hidden');
+            gameBoard.classList.remove('hidden');
+            gameStats.classList.remove('hidden');
+            controlBtns.classList.remove('hidden');
+            startBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>游戏中...';
+            startBtn.disabled = true;
+
+            createPuzzleGrid();
+
+            gameState.startTime = Date.now();
+            gameState.timerInterval = setInterval(updateTimer, 1000);
+            updateStats();
+
+            hintImage.src = gameState.image;
+        }
+
+        function createPuzzleGrid() {
+            const rows = gameState.rows;
+            const cols = gameState.cols;
+            const totalPieces = rows * cols;
+
+            puzzleGrid.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
+            puzzleGrid.style.gridTemplateRows = `repeat(${rows}, 1fr)`;
+
+            // 根据图片比例计算拼图尺寸
+            const maxWidth = Math.min(600, window.innerWidth - 80);
+            const maxHeight = 500;
+
+            let gridWidth, gridHeight;
+
+            if (gameState.aspectRatio >= 1) {
+                // 横向图片
+                gridWidth = maxWidth;
+                gridHeight = gridWidth / gameState.aspectRatio;
+                if (gridHeight > maxHeight) {
+                    gridHeight = maxHeight;
+                    gridWidth = gridHeight * gameState.aspectRatio;
+                }
+            } else {
+                // 纵向图片
+                gridHeight = maxHeight;
+                gridWidth = gridHeight * gameState.aspectRatio;
+                if (gridWidth > maxWidth) {
+                    gridWidth = maxWidth;
+                    gridHeight = gridWidth / gameState.aspectRatio;
+                }
+            }
+
+            puzzleGrid.style.width = `${gridWidth}px`;
+            puzzleGrid.style.height = `${gridHeight}px`;
+
+            // 创建拼图块
+            gameState.pieces = [];
+            for (let i = 0; i < totalPieces; i++) {
+                gameState.pieces.push({
+                    id: i,
+                    currentPos: i,
+                    correctPos: i
+                });
+            }
+
+            // 打乱
+            let attempts = 0;
+            do {
+                shuffleArray(gameState.pieces);
+                attempts++;
+            } while (isSolved() && attempts < 10);
+
+            gameState.pieces.forEach((piece, index) => {
+                piece.currentPos = index;
+            });
+
+            renderPuzzleGrid();
+        }
+
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+        }
+
+        function renderPuzzleGrid() {
+            const rows = gameState.rows;
+            const cols = gameState.cols;
+
+            puzzleGrid.innerHTML = '';
+
+            gameState.pieces.forEach((piece, index) => {
+                const pieceEl = document.createElement('div');
+                pieceEl.className = 'puzzle-piece';
+                pieceEl.style.width = '100%';
+                pieceEl.style.height = '100%';
+                pieceEl.dataset.index = index;
+
+                // 计算背景位置
+                const correctCol = piece.correctPos % cols;
+                const correctRow = Math.floor(piece.correctPos / cols);
+                const bgX = correctCol * (100 / (cols - 1));
+                const bgY = correctRow * (100 / (rows - 1));
+
+                pieceEl.style.backgroundImage = `url(${gameState.image})`;
+                pieceEl.style.backgroundSize = `${cols * 100}% ${rows * 100}%`;
+                pieceEl.style.backgroundPosition = `${bgX}% ${bgY}%`;
+
+                if (piece.currentPos === piece.correctPos) {
+                    pieceEl.classList.add('correct');
+                }
+
+                pieceEl.addEventListener('click', () => handlePieceClick(index));
+                puzzleGrid.appendChild(pieceEl);
+            });
+        }
+
+        function handlePieceClick(index) {
+            if (!gameState.isPlaying) return;
+
+            const pieces = document.querySelectorAll('.puzzle-piece');
+
+            if (gameState.selectedPiece === null) {
+                gameState.selectedPiece = index;
+                pieces[index].classList.add('selected');
+                return;
+            }
+
+            if (gameState.selectedPiece === index) {
+                pieces[index].classList.remove('selected');
+                gameState.selectedPiece = null;
+                return;
+            }
+
+            swapPieces(gameState.selectedPiece, index);
+
+            pieces[gameState.selectedPiece].classList.remove('selected');
+            gameState.selectedPiece = null;
+        }
+
+        function swapPieces(index1, index2) {
+            [gameState.pieces[index1], gameState.pieces[index2]] =
+            [gameState.pieces[index2], gameState.pieces[index1]];
+
+            gameState.pieces[index1].currentPos = index1;
+            gameState.pieces[index2].currentPos = index2;
+
+            gameState.moves++;
+
+            renderPuzzleGrid();
+            updateStats();
+
+            if (isSolved()) {
+                handleWin();
+            }
+        }
+
+        function isSolved() {
+            return gameState.pieces.every(piece => piece.currentPos === piece.correctPos);
+        }
+
+        function updateStats() {
+            moves.textContent = gameState.moves;
+
+            const correct = gameState.pieces.filter(p => p.currentPos === p.correctPos).length;
+            const total = gameState.pieces.length;
+            const percent = Math.round((correct / total) * 100);
+            progress.textContent = `${percent}%`;
+        }
+
+        function updateTimer() {
+            const elapsed = Math.floor((Date.now() - gameState.startTime) / 1000);
+            const minutes = Math.floor(elapsed / 60).toString().padStart(2, '0');
+            const seconds = (elapsed % 60).toString().padStart(2, '0');
+            timer.textContent = `${minutes}:${seconds}`;
+        }
+
+        function handleWin() {
+            gameState.isPlaying = false;
+            clearInterval(gameState.timerInterval);
+
+            const finalTime = timer.textContent;
+            document.getElementById('shareTime').textContent = finalTime;
+            document.getElementById('shareDifficulty').textContent = `${gameState.rows} × ${gameState.cols}`;
+            document.getElementById('shareImage').src = gameState.image;
+
+            setTimeout(() => {
+                winModal.classList.remove('hidden');
+                document.querySelector('.share-card').classList.add('celebrate');
+            }, 500);
+        }
+
+        // Hint Button
+        hintBtn.addEventListener('mousedown', () => {
+            if (gameState.isPlaying) hintOverlay.classList.remove('hidden');
+        });
+
+        hintBtn.addEventListener('mouseup', () => {
+            hintOverlay.classList.add('hidden');
+        });
+
+        hintBtn.addEventListener('mouseleave', () => {
+            hintOverlay.classList.add('hidden');
+        });
+
+        hintBtn.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            if (gameState.isPlaying) hintOverlay.classList.remove('hidden');
+        });
+
+        hintBtn.addEventListener('touchend', () => {
+            hintOverlay.classList.add('hidden');
+        });
+
+        hintOverlay.addEventListener('click', () => {
+            hintOverlay.classList.add('hidden');
+        });
+
+        // Reset Button
+        resetBtn.addEventListener('click', () => {
+            if (confirm('确定要重新开始吗？当前进度将丢失。')) {
+                clearInterval(gameState.timerInterval);
+                startGame();
+            }
+        });
+
+        // Play Again
+        document.getElementById('playAgainBtn').addEventListener('click', () => {
+            winModal.classList.add('hidden');
+            clearInterval(gameState.timerInterval);
+            startGame();
+        });
+
+        // Share Button
+        document.getElementById('shareBtn').addEventListener('click', async () => {
+            const shareText = `我在拼图游戏中完成了 ${gameState.rows}×${gameState.cols} 难度的挑战！\n⏱️ 用时：${document.getElementById('shareTime').textContent}\n🎯 步数：${gameState.moves}步\n🧩 来挑战我吧！`;
+
+            if (navigator.share) {
+                try {
+                    await navigator.share({
+                        title: '拼图游戏 - 完成挑战！',
+                        text: shareText,
+                        url: window.location.href
+                    });
+                } catch (err) {
+                    copyToClipboard(shareText);
+                }
+            } else {
+                copyToClipboard(shareText);
+            }
+        });
+
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                const btn = document.getElementById('shareBtn');
+                const originalText = btn.innerHTML;
+                btn.innerHTML = '<i class="fas fa-check mr-2"></i>已复制到剪贴板';
+                setTimeout(() => {
+                    btn.innerHTML = originalText;
+                }, 2000);
+            });
+        }
+
+        // Responsive resize
+        window.addEventListener('resize', () => {
+            if (gameState.isPlaying) {
+                const maxWidth = Math.min(600, window.innerWidth - 80);
+                const maxHeight = 500;
+                let gridWidth, gridHeight;
+
+                if (gameState.aspectRatio >= 1) {
+                    gridWidth = maxWidth;
+                    gridHeight = gridWidth / gameState.aspectRatio;
+                    if (gridHeight > maxHeight) {
+                        gridHeight = maxHeight;
+                        gridWidth = gridHeight * gameState.aspectRatio;
+                    }
+                } else {
+                    gridHeight = maxHeight;
+                    gridWidth = gridHeight * gameState.aspectRatio;
+                    if (gridWidth > maxWidth) {
+                        gridWidth = maxWidth;
+                        gridHeight = gridWidth / gameState.aspectRatio;
+                    }
+                }
+
+                puzzleGrid.style.width = `${gridWidth}px`;
+                puzzleGrid.style.height = `${gridHeight}px`;
+            }
+        });
+    </script>
+</body>
+</html>

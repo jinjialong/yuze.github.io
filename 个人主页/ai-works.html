@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI作品 | 玉泽</title>
+    <link rel="icon" type="image/x-icon" href="bitbug_favicon.ico">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#6366f1',
+                        secondary: '#8b5cf6',
+                        accent: '#a78bfa',
+                    },
+                    fontFamily: {
+                        sans: ['Inter', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            background-color: #fafafa;
+            color: #1a1a1a;
+            line-height: 1.6;
+        }
+
+        .gradient-text {
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #a78bfa 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .card-hover {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .card-hover:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 40px -12px rgba(99, 102, 241, 0.15);
+        }
+
+        .icon-box {
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(139, 92, 246, 0.1) 100%);
+        }
+
+        .nav-link {
+            position: relative;
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(90deg, #6366f1, #8b5cf6);
+            transition: width 0.3s ease;
+        }
+
+        .nav-link:hover::after {
+            width: 100%;
+        }
+
+        .project-card {
+            background: white;
+            border: 1px solid #f0f0f0;
+            transition: all 0.3s ease;
+        }
+
+        .project-card:hover {
+            border-color: rgba(99, 102, 241, 0.3);
+            box-shadow: 0 12px 32px -8px rgba(99, 102, 241, 0.12);
+        }
+
+        .tag {
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.08) 0%, rgba(139, 92, 246, 0.08) 100%);
+            color: #6366f1;
+        }
+
+        .tag-filter {
+            background: white;
+            border: 1px solid #e5e7eb;
+            color: #6b7280;
+            transition: all 0.2s ease;
+        }
+
+        .tag-filter:hover,
+        .tag-filter.active {
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.08) 0%, rgba(139, 92, 246, 0.08) 100%);
+            border-color: #6366f1;
+            color: #6366f1;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .animate-fade-in-up {
+            animation: fadeInUp 0.6s ease-out forwards;
+        }
+
+        .delay-100 { animation-delay: 0.1s; }
+        .delay-200 { animation-delay: 0.2s; }
+        .delay-300 { animation-delay: 0.3s; }
+        .delay-400 { animation-delay: 0.4s; }
+        .delay-500 { animation-delay: 0.5s; }
+
+        .back-btn {
+            background: white;
+            border: 1px solid #e5e7eb;
+            transition: all 0.2s ease;
+        }
+
+        .back-btn:hover {
+            background: #f9fafb;
+            border-color: #d1d5db;
+        }
+    </style>
+</head>
+<body class="antialiased">
+    <!-- Navigation -->
+    <nav class="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-xl border-b border-gray-100">
+        <div class="max-w-6xl mx-auto px-6 py-4">
+            <div class="flex items-center justify-between">
+                <a href="index.html" class="text-lg font-semibold text-gray-900">玉泽</a>
+                <div class="hidden md:flex items-center space-x-8 text-sm">
+                    <a href="index.html#about" class="nav-link text-gray-600 hover:text-gray-900 transition-colors">关于</a>
+                    <a href="index.html#ai-works" class="nav-link text-primary font-medium">AI作品</a>
+                    <a href="index.html#articles" class="nav-link text-gray-600 hover:text-gray-900 transition-colors">精选文章</a>
+                    <a href="index.html#certs" class="nav-link text-gray-600 hover:text-gray-900 transition-colors">证书</a>
+                    <a href="index.html#contact" class="nav-link text-gray-600 hover:text-gray-900 transition-colors">联系</a>
+                </div>
+                <button id="mobileMenuBtn" class="md:hidden text-gray-600">
+                    <i class="fas fa-bars text-lg"></i>
+                </button>
+            </div>
+        </div>
+        <!-- Mobile Menu -->
+        <div id="mobileMenu" class="hidden md:hidden bg-white border-t border-gray-100">
+            <div class="px-6 py-4 space-y-3">
+                <a href="index.html#about" class="block text-gray-600 hover:text-gray-900">关于</a>
+                <a href="index.html#ai-works" class="block text-primary font-medium">AI作品</a>
+                <a href="index.html#articles" class="block text-gray-600 hover:text-gray-900">精选文章</a>
+                <a href="index.html#certs" class="block text-gray-600 hover:text-gray-900">证书</a>
+                <a href="index.html#contact" class="block text-gray-600 hover:text-gray-900">联系</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Header Section -->
+    <section class="pt-32 pb-12 px-6">
+        <div class="max-w-6xl mx-auto">
+            <div class="animate-fade-in-up">
+                <a href="index.html" class="back-btn inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm text-gray-600 mb-6">
+                    <i class="fas fa-arrow-left"></i>
+                    返回主页
+                </a>
+                <h1 class="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
+                    AI作品
+                </h1>
+                <p class="text-gray-500 max-w-2xl">
+                    这里汇集了我所有的AI项目实践，包括AI Agent、LLM应用、Prompt工程等多个领域的探索与创新。
+                </p>
+            </div>
+
+            <!-- Filter Tags -->
+            <div class="mt-8 flex flex-wrap gap-3 animate-fade-in-up delay-100">
+                <button class="tag-filter active px-4 py-2 rounded-full text-sm font-medium" data-filter="all">
+                    全部
+                </button>
+                <button class="tag-filter px-4 py-2 rounded-full text-sm font-medium" data-filter="agent">
+                    AI Agent
+                </button>
+                <button class="tag-filter px-4 py-2 rounded-full text-sm font-medium" data-filter="llm">
+                    LLM应用
+                </button>
+                <button class="tag-filter px-4 py-2 rounded-full text-sm font-medium" data-filter="prompt">
+                    Prompt工程
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- AI Works Grid -->
+    <section class="py-12 px-6">
+        <div class="max-w-6xl mx-auto">
+            <div id="projectsGrid" class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- AI Work 1 -->
+                <div class="project-card rounded-2xl overflow-hidden card-hover animate-fade-in-up delay-100" data-category="agent">
+                    <div class="h-48 overflow-hidden">
+                        <img src="https://picsum.photos/400/300?random=10" alt="智能数据分析助手" class="w-full h-full object-cover">
+                    </div>
+                    <div class="p-6">
+                        <div class="flex items-center gap-2 mb-3">
+                            <span class="tag px-2 py-1 rounded text-xs">AI Agent</span>
+                            <span class="text-gray-400 text-xs">2024.12</span>
+                        </div>
+                        <h3 class="text-lg font-semibold text-gray-900 mb-2">智能数据分析助手</h3>
+                        <p class="text-gray-500 text-sm mb-4">
+                            基于大语言模型的自动化数据分析工具，支持自然语言查询与可视化报表生成
+                        </p>
+                        <div class="flex items-center gap-3">
+                            <a href="#" class="text-primary text-sm font-medium hover:text-secondary transition-colors">
+                                查看详情 <i class="fas fa-arrow-right ml-1 text-xs"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- AI Work 2 -->
+                <div class="project-card rounded-2xl overflow-hidden card-hover animate-fade-in-up delay-200" data-category="llm">
+                    <div class="h-48 overflow-hidden">
+                        <img src="https://picsum.photos/400/300?random=11" alt="智能客服机器人" class="w-full h-full object-cover">
+                    </div>
+                    <div class="p-6">
+                        <div class="flex items-center gap-2 mb-3">
+                            <span class="tag px-2 py-1 rounded text-xs">LLM应用</span>
+                            <span class="text-gray-400 text-xs">2024.11</span>
+                        </div>
+                        <h3 class="text-lg font-semibold text-gray-900 mb-2">智能客服机器人</h3>
+                        <p class="text-gray-500 text-sm mb-4">
+                            面向B端客户的智能客服解决方案，支持多轮对话与业务场景深度集成
+                        </p>
+                        <div class="flex items-center gap-3">
+                            <a href="#" class="text-primary text-sm font-medium hover:text-secondary transition-colors">
+                                查看详情 <i class="fas fa-arrow-right ml-1 text-xs"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- AI Work 3 -->
+                <div class="project-card rounded-2xl overflow-hidden card-hover animate-fade-in-up delay-300" data-category="prompt">
+                    <div class="h-48 overflow-hidden">
+                        <img src="https://picsum.photos/400/300?random=12" alt="Prompt优化工具箱" class="w-full h-full object-cover">
+                    </div>
+                    <div class="p-6">
+                        <div class="flex items-center gap-2 mb-3">
+                            <span class="tag px-2 py-1 rounded text-xs">Prompt工程</span>
+                            <span class="text-gray-400 text-xs">2024.10</span>
+                        </div>
+                        <h3 class="text-lg font-semibold text-gray-900 mb-2">Prompt优化工具箱</h3>
+                        <p class="text-gray-500 text-sm mb-4">
+                            一套完整的Prompt工程最佳实践模板与优化工具，提升AI输出质量与稳定性
+                        </p>
+                        <div class="flex items-center gap-3">
+                            <a href="#" class="text-primary text-sm font-medium hover:text-secondary transition-colors">
+                                查看详情 <i class="fas fa-arrow-right ml-1 text-xs"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- AI Work 4 -->
+                <div class="project-card rounded-2xl overflow-hidden card-hover animate-fade-in-up delay-100" data-category="agent">
+                    <div class="h-48 overflow-hidden bg-gradient-to-br from-accent/10 to-primary/10 flex items-center justify-center">
+                        <i class="fas fa-comments text-6xl text-accent/30"></i>
+                    </div>
+                    <div class="p-6">
+                        <div class="flex items-center gap-2 mb-3">
+                            <span class="tag px-2 py-1 rounded text-xs">AI Agent</span>
+                            <span class="text-gray-400 text-xs">2025.03</span>
+                        </div>
+                        <h3 class="text-lg font-semibold text-gray-900 mb-2">多Agent协作平台</h3>
+                        <p class="text-gray-500 text-sm mb-4">
+                            支持多AI Agent协同工作的任务编排平台，实现复杂工作流的自动化处理
+                        </p>
+                        <div class="flex items-center gap-3">
+                            <span class="text-gray-400 text-sm">
+                                <i class="fas fa-clock mr-1"></i> 规划中
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Empty State (Hidden by default) -->
+            <div id="emptyState" class="hidden text-center py-20">
+                <div class="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i class="fas fa-search text-3xl text-gray-400"></i>
+                </div>
+                <h3 class="text-lg font-medium text-gray-900 mb-2">暂无相关项目</h3>
+                <p class="text-gray-500 text-sm">该分类下暂时没有项目，请查看其他分类</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="py-8 px-6 border-t border-gray-100">
+        <div class="max-w-6xl mx-auto text-center">
+            <p class="text-sm text-gray-400">
+                © 2025 玉泽. All rights reserved.
+            </p>
+        </div>
+    </footer>
+
+    <script>
+        // Mobile Menu Toggle
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const mobileMenu = document.getElementById('mobileMenu');
+
+        mobileMenuBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+
+        // Close mobile menu when clicking a link
+        mobileMenu.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', () => {
+                mobileMenu.classList.add('hidden');
+            });
+        });
+
+        // Filter functionality
+        const filterButtons = document.querySelectorAll('.tag-filter');
+        const projectCards = document.querySelectorAll('#projectsGrid > div[data-category]');
+        const emptyState = document.getElementById('emptyState');
+
+        filterButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                // Update active state
+                filterButtons.forEach(btn => btn.classList.remove('active'));
+                button.classList.add('active');
+
+                const filter = button.dataset.filter;
+                let visibleCount = 0;
+
+                projectCards.forEach(card => {
+                    if (filter === 'all' || card.dataset.category === filter) {
+                        card.style.display = 'block';
+                        // Re-trigger animation
+                        card.style.animation = 'none';
+                        card.offsetHeight; // Trigger reflow
+                        card.style.animation = null;
+                        visibleCount++;
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+
+                // Show/hide empty state
+                if (visibleCount === 0) {
+                    emptyState.classList.remove('hidden');
+                } else {
+                    emptyState.classList.add('hidden');
+                }
+            });
+        });
+
+        // Intersection Observer for animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.animate-fade-in-up').forEach(el => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(30px)';
+            el.style.transition = 'opacity 0.6s ease-out, transform 0.6s ease-out';
+            observer.observe(el);
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>新年行大运 - 手势抽签</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- MediaPipe Hands -->
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/control_utils/control_utils.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js" crossorigin="anonymous"></script>
+</head>
+<body>
+    <div class="container">
+        <!-- 背景装饰 -->
+        <div class="bg-decoration">
+            <div class="cloud cloud-1"></div>
+            <div class="cloud cloud-2"></div>
+            <div class="cloud cloud-3"></div>
+            <div class="lantern lantern-1"></div>
+            <div class="lantern lantern-2"></div>
+        </div>
+
+        <!-- 摄像头区域 -->
+        <div class="camera-container">
+            <video id="input_video" class="input-video" autoplay playsinline></video>
+            <canvas id="output_canvas" class="output-canvas"></canvas>
+            <div class="camera-label">手势检测中</div>
+        </div>
+
+        <!-- 主标题 -->
+        <h1 class="main-title">新年行大运</h1>
+        <p class="subtitle">手势抽签</p>
+
+        <!-- 状态提示 -->
+        <div class="status-container">
+            <div id="status-text" class="status-text">请伸出手掌</div>
+            <div id="progress-container" class="progress-container hidden">
+                <div class="progress-bar">
+                    <div id="progress-fill" class="progress-fill"></div>
+                </div>
+                <div id="countdown-text" class="countdown-text">3</div>
+            </div>
+        </div>
+
+        <!-- 抽签桶 -->
+        <div class="bucket-container">
+            <div id="bucket" class="bucket">
+                <div class="bucket-body">
+                    <div class="bucket-pattern"></div>
+                    <div class="bucket-opening"></div>
+                </div>
+                <div class="bucket-stand"></div>
+                <!-- 签筒内的签 -->
+                <div class="sticks-container">
+                    <div class="stick stick-1"></div>
+                    <div class="stick stick-2"></div>
+                    <div class="stick stick-3"></div>
+                    <div class="stick stick-4"></div>
+                    <div class="stick stick-5"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 签卡（翻转卡片） -->
+        <div id="card-container" class="card-container hidden">
+            <div id="fortune-card" class="fortune-card">
+                <div class="card-front">
+                    <div class="card-border">
+                        <div class="card-corner corner-tl"></div>
+                        <div class="card-corner corner-tr"></div>
+                        <div class="card-corner corner-bl"></div>
+                        <div class="card-corner corner-br"></div>
+                        <div class="card-content">
+                            <div class="card-title">新年签</div>
+                            <div id="fortune-name" class="fortune-name">--</div>
+                            <div id="fortune-level" class="fortune-level">--</div>
+                            <div id="fortune-phrase" class="fortune-phrase">----</div>
+                            <div class="divider"></div>
+                            <div id="fortune-meaning" class="fortune-meaning">--------</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 再抽一签按钮 -->
+        <button id="retry-btn" class="retry-btn hidden">再抽一签</button>
+
+        <!-- 粒子效果容器 -->
+        <div id="particles" class="particles"></div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
