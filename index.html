@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>玉泽 | B端SaaS高级产品经理 & AI应用探索者</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#6366f1',
+                        secondary: '#8b5cf6',
+                        accent: '#a78bfa',
+                    },
+                    fontFamily: {
+                        sans: ['Inter', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            background-color: #fafafa;
+            color: #1a1a1a;
+            line-height: 1.6;
+        }
+
+        .gradient-text {
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #a78bfa 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .gradient-border {
+            position: relative;
+            background: white;
+            border-radius: 16px;
+        }
+
+        .gradient-border::before {
+            content: '';
+            position: absolute;
+            inset: -1px;
+            border-radius: 16px;
+            padding: 1px;
+            background: linear-gradient(135deg, #6366f1, #8b5cf6, #a78bfa);
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+        }
+
+        .card-hover {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .card-hover:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 40px -12px rgba(99, 102, 241, 0.15);
+        }
+
+        .icon-box {
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(139, 92, 246, 0.1) 100%);
+        }
+
+        .nav-link {
+            position: relative;
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(90deg, #6366f1, #8b5cf6);
+            transition: width 0.3s ease;
+        }
+
+        .nav-link:hover::after {
+            width: 100%;
+        }
+
+        .stat-number {
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .section-title {
+            position: relative;
+            display: inline-block;
+        }
+
+        .section-title::before {
+            content: '';
+            position: absolute;
+            left: -16px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 4px;
+            height: 24px;
+            background: linear-gradient(180deg, #6366f1, #8b5cf6);
+            border-radius: 2px;
+        }
+
+        .project-card {
+            background: white;
+            border: 1px solid #f0f0f0;
+            transition: all 0.3s ease;
+        }
+
+        .project-card:hover {
+            border-color: rgba(99, 102, 241, 0.3);
+            box-shadow: 0 12px 32px -8px rgba(99, 102, 241, 0.12);
+        }
+
+        .social-btn {
+            transition: all 0.3s ease;
+        }
+
+        .social-btn:hover {
+            transform: scale(1.05);
+        }
+
+        .tag {
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.08) 0%, rgba(139, 92, 246, 0.08) 100%);
+            color: #6366f1;
+        }
+
+        .cert-card {
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.05) 0%, rgba(139, 92, 246, 0.05) 100%);
+            border: 1px solid rgba(99, 102, 241, 0.1);
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .animate-fade-in-up {
+            animation: fadeInUp 0.6s ease-out forwards;
+        }
+
+        .delay-100 { animation-delay: 0.1s; }
+        .delay-200 { animation-delay: 0.2s; }
+        .delay-300 { animation-delay: 0.3s; }
+
+        .contact-card {
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.03) 0%, rgba(139, 92, 246, 0.03) 100%);
+            border: 1px solid rgba(99, 102, 241, 0.1);
+        }
+
+        .article-card {
+            background: white;
+            border: 1px solid #f0f0f0;
+            transition: all 0.3s ease;
+        }
+
+        .article-card:hover {
+            border-color: rgba(99, 102, 241, 0.3);
+            box-shadow: 0 8px 24px -8px rgba(99, 102, 241, 0.12);
+        }
+    </style>
+</head>
+<body class="antialiased">
+    <!-- Navigation -->
+    <nav class="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-xl border-b border-gray-100">
+        <div class="max-w-6xl mx-auto px-6 py-4">
+            <div class="flex items-center justify-between">
+                <a href="#" class="text-lg font-semibold text-gray-900">玉泽</a>
+                <div class="hidden md:flex items-center space-x-8 text-sm">
+                    <a href="#about" class="nav-link text-gray-600 hover:text-gray-900 transition-colors">关于</a>
+                    <a href="#ai-works" class="nav-link text-gray-600 hover:text-gray-900 transition-colors">AI作品</a>
+                    <a href="#articles" class="nav-link text-gray-600 hover:text-gray-900 transition-colors">精选文章</a>
+                    <a href="#certs" class="nav-link text-gray-600 hover:text-gray-900 transition-colors">证书</a>
+                    <a href="#contact" class="nav-link text-gray-600 hover:text-gray-900 transition-colors">联系</a>
+                </div>
+                <button id="mobileMenuBtn" class="md:hidden text-gray-600">
+                    <i class="fas fa-bars text-lg"></i>
+                </button>
+            </div>
+        </div>
+        <!-- Mobile Menu -->
+        <div id="mobileMenu" class="hidden md:hidden bg-white border-t border-gray-100">
+            <div class="px-6 py-4 space-y-3">
+                <a href="#about" class="block text-gray-600 hover:text-gray-900">关于</a>
+                <a href="#ai-works" class="block text-gray-600 hover:text-gray-900">AI作品</a>
+                <a href="#articles" class="block text-gray-600 hover:text-gray-900">精选文章</a>
+                <a href="#certs" class="block text-gray-600 hover:text-gray-900">证书</a>
+                <a href="#contact" class="block text-gray-600 hover:text-gray-900">联系</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="pt-32 pb-20 px-6">
+        <div class="max-w-6xl mx-auto">
+            <div class="animate-fade-in-up">
+                <span class="tag inline-block px-3 py-1 rounded-full text-xs font-medium mb-6">
+                    B端SaaS高级产品经理 & AI应用探索者
+                </span>
+                <h1 class="text-5xl md:text-7xl font-bold text-gray-900 mb-6 tracking-tight">
+                    玉泽
+                </h1>
+                <p class="text-xl md:text-2xl text-gray-600 mb-4 font-light">
+                    0~1 SaaS产品建设主导者 · AI+B端商业化落地践行者
+                </p>
+                <p class="text-gray-500 max-w-2xl mb-8 leading-relaxed">
+                    6年B端产品实战经验 · 杭州高层次人才E级 · 计算机科学与技术本科
+                </p>
+
+                <!-- Social Links -->
+                <div class="flex flex-wrap gap-4 mb-12">
+                    <button onclick="showWeChat()" class="social-btn flex items-center gap-2 px-5 py-2.5 bg-[#07C160] text-white rounded-full text-sm font-medium hover:opacity-90">
+                        <i class="fab fa-weixin"></i>
+                        微信
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="py-20 px-6 bg-white">
+        <div class="max-w-6xl mx-auto">
+            <div class="animate-fade-in-up">
+                <h2 class="section-title text-3xl font-bold text-gray-900 mb-4">关于我</h2>
+                <p class="text-gray-500 mb-12">深耕B端SaaS领域，专注AI技术与业务场景的深度结合</p>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-6">
+                <!-- Card 1 -->
+                <div class="project-card rounded-2xl p-6 card-hover animate-fade-in-up delay-100">
+                    <div class="icon-box w-12 h-12 rounded-xl flex items-center justify-center mb-4">
+                        <i class="fas fa-chart-line text-primary text-xl"></i>
+                    </div>
+                    <h3 class="text-lg font-semibold text-gray-900 mb-2">商业转化</h3>
+                    <p class="text-gray-500 text-sm mb-4 leading-relaxed">
+                        成功将AI质检功能商业化落地，审核效率提升70%，成为客户核心卖点，助力头部客户获客
+                    </p>
+                    <span class="tag px-2 py-1 rounded text-xs font-medium">AI商业化</span>
+                </div>
+
+                <!-- Card 2 -->
+                <div class="project-card rounded-2xl p-6 card-hover animate-fade-in-up delay-200">
+                    <div class="icon-box w-12 h-12 rounded-xl flex items-center justify-center mb-4">
+                        <i class="fas fa-cogs text-primary text-xl"></i>
+                    </div>
+                    <h3 class="text-lg font-semibold text-gray-900 mb-2">交付提效</h3>
+                    <p class="text-gray-500 text-sm mb-4 leading-relaxed">
+                        主导PaaS化架构，B2B系统交付成本降低90%，实施周期缩短70%，实现标准化产品复制
+                    </p>
+                    <span class="tag px-2 py-1 rounded text-xs font-medium">PaaS架构</span>
+                </div>
+
+                <!-- Card 3 -->
+                <div class="project-card rounded-2xl p-6 card-hover animate-fade-in-up delay-300">
+                    <div class="icon-box w-12 h-12 rounded-xl flex items-center justify-center mb-4">
+                        <i class="fas fa-brain text-primary text-xl"></i>
+                    </div>
+                    <h3 class="text-lg font-semibold text-gray-900 mb-2">扎实基本功</h3>
+                    <p class="text-gray-500 text-sm mb-4 leading-relaxed">
+                        掌握LLM、Prompt工程，持有软考高级、PMP、NPDP、ACP等多项权威认证
+                    </p>
+                    <span class="tag px-2 py-1 rounded text-xs font-medium">专业认证</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- AI Works Section -->
+    <section id="ai-works" class="py-20 px-6">
+        <div class="max-w-6xl mx-auto">
+            <div class="animate-fade-in-up">
+                <h2 class="section-title text-3xl font-bold text-gray-900 mb-4">AI作品</h2>
+                <p class="text-gray-500 mb-12">AI驱动的创新产品与实践探索</p>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-6">
+                <!-- AI Work 1 -->
+                <div class="project-card rounded-2xl overflow-hidden card-hover animate-fade-in-up delay-100">
+                    <div class="h-48 overflow-hidden">
+                        <img src="https://picsum.photos/400/300?random=10" alt="AI作品1" class="w-full h-full object-cover">
+                    </div>
+                    <div class="p-6">
+                        <div class="flex items-center gap-2 mb-3">
+                            <span class="tag px-2 py-1 rounded text-xs">AI Agent</span>
+                        </div>
+                        <h3 class="text-lg font-semibold text-gray-900 mb-2">智能数据分析助手</h3>
+                        <p class="text-gray-500 text-sm">
+                            基于大语言模型的自动化数据分析工具，支持自然语言查询与可视化报表生成
+                        </p>
+                    </div>
+                </div>
+
+                <!-- AI Work 2 -->
+                <div class="project-card rounded-2xl overflow-hidden card-hover animate-fade-in-up delay-200">
+                    <div class="h-48 overflow-hidden">
+                        <img src="https://picsum.photos/400/300?random=11" alt="AI作品2" class="w-full h-full object-cover">
+                    </div>
+                    <div class="p-6">
+                        <div class="flex items-center gap-2 mb-3">
+                            <span class="tag px-2 py-1 rounded text-xs">LLM应用</span>
+                        </div>
+                        <h3 class="text-lg font-semibold text-gray-900 mb-2">智能客服机器人</h3>
+                        <p class="text-gray-500 text-sm">
+                            面向B端客户的智能客服解决方案，支持多轮对话与业务场景深度集成
+                        </p>
+                    </div>
+                </div>
+
+                <!-- AI Work 3 -->
+                <div class="project-card rounded-2xl overflow-hidden card-hover animate-fade-in-up delay-300">
+                    <div class="h-48 overflow-hidden">
+                        <img src="https://picsum.photos/400/300?random=12" alt="AI作品3" class="w-full h-full object-cover">
+                    </div>
+                    <div class="p-6">
+                        <div class="flex items-center gap-2 mb-3">
+                            <span class="tag px-2 py-1 rounded text-xs">Prompt工程</span>
+                        </div>
+                        <h3 class="text-lg font-semibold text-gray-900 mb-2">Prompt优化工具箱</h3>
+                        <p class="text-gray-500 text-sm">
+                            一套完整的Prompt工程最佳实践模板与优化工具，提升AI输出质量与稳定性
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Selected Articles Section -->
+    <section id="articles" class="py-20 px-6 bg-white">
+        <div class="max-w-6xl mx-auto">
+            <div class="animate-fade-in-up">
+                <h2 class="section-title text-3xl font-bold text-gray-900 mb-4">精选文章</h2>
+                <p class="text-gray-500 mb-12">产品思考与实践总结</p>
+            </div>
+
+            <div class="space-y-4">
+                <!-- Article 1 -->
+                <a href="https://www.kdocs.cn/l/cmNNJvKTfxMm" target="_blank" class="article-card block rounded-2xl p-6 animate-fade-in-up delay-100">
+                    <div class="flex items-start gap-4">
+                        <div class="icon-box w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0">
+                            <i class="fas fa-map-marker-alt text-primary text-xl"></i>
+                        </div>
+                        <div class="flex-1">
+                            <h3 class="text-lg font-semibold text-gray-900 mb-2">数智化选址产品分析</h3>
+                            <p class="text-gray-500 text-sm mb-3">
+                                深入分析数智化选址产品的市场现状、核心功能与商业模式，探索AI技术在选址决策中的应用价值。
+                            </p>
+                            <div class="flex items-center text-primary text-sm font-medium">
+                                阅读全文 <i class="fas fa-external-link-alt ml-2 text-xs"></i>
+                            </div>
+                        </div>
+                        <div class="hidden md:block text-gray-300">
+                            <i class="fas fa-chevron-right"></i>
+                        </div>
+                    </div>
+                </a>
+
+                <!-- Article 2 -->
+                <a href="https://docs.qq.com/doc/DSmdpUkZpRm1RZEVZ" target="_blank" class="article-card block rounded-2xl p-6 animate-fade-in-up delay-200">
+                    <div class="flex items-start gap-4">
+                        <div class="icon-box w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0">
+                            <i class="fas fa-warehouse text-primary text-xl"></i>
+                        </div>
+                        <div class="flex-1">
+                            <h3 class="text-lg font-semibold text-gray-900 mb-2">【竞品分析】万里牛ERP</h3>
+                            <p class="text-gray-500 text-sm mb-3">
+                                全面的ERP竞品分析报告，从功能架构、用户体验、市场定位等维度深度拆解万里牛ERP产品。
+                            </p>
+                            <div class="flex items-center text-primary text-sm font-medium">
+                                阅读全文 <i class="fas fa-external-link-alt ml-2 text-xs"></i>
+                            </div>
+                        </div>
+                        <div class="hidden md:block text-gray-300">
+                            <i class="fas fa-chevron-right"></i>
+                        </div>
+                    </div>
+                </a>
+
+                <!-- Article 3 -->
+                <a href="https://www.woshipm.com/?p=6375644&preview=true" target="_blank" class="article-card block rounded-2xl p-6 animate-fade-in-up delay-300">
+                    <div class="flex items-start gap-4">
+                        <div class="icon-box w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0">
+                            <i class="fas fa-bug text-primary text-xl"></i>
+                        </div>
+                        <div class="flex-1">
+                            <h3 class="text-lg font-semibold text-gray-900 mb-2">做 AI 竞品分析失败了：一次被 Bug 和需求膨胀拖垮的尝试</h3>
+                            <p class="text-gray-500 text-sm mb-3">
+                                复盘一次AI竞品分析项目的失败经历，分享在项目过程中遇到的Bug处理与需求管理教训。
+                            </p>
+                            <div class="flex items-center text-primary text-sm font-medium">
+                                阅读全文 <i class="fas fa-external-link-alt ml-2 text-xs"></i>
+                            </div>
+                        </div>
+                        <div class="hidden md:block text-gray-300">
+                            <i class="fas fa-chevron-right"></i>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Certificates Section -->
+    <section id="certs" class="py-20 px-6">
+        <div class="max-w-6xl mx-auto">
+            <div class="animate-fade-in-up">
+                <h2 class="section-title text-3xl font-bold text-gray-900 mb-4">专业认证</h2>
+                <p class="text-gray-500 mb-12">权威资质认证，专业能力背书</p>
+            </div>
+
+            <!-- High-level Certificates -->
+            <div class="mb-8">
+                <h3 class="text-sm font-medium text-gray-400 uppercase tracking-wider mb-4">高阶证书</h3>
+                <div class="grid md:grid-cols-2 gap-4">
+                    <div class="cert-card rounded-xl p-5 flex items-center gap-4">
+                        <div class="w-12 h-12 bg-gradient-to-br from-primary to-secondary rounded-xl flex items-center justify-center flex-shrink-0">
+                            <i class="fas fa-clipboard-check text-white text-xl"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-semibold text-gray-900">信息系统项目管理师</h4>
+                            <p class="text-sm text-gray-500">软考高级</p>
+                        </div>
+                    </div>
+                    <div class="cert-card rounded-xl p-5 flex items-center gap-4">
+                        <div class="w-12 h-12 bg-gradient-to-br from-primary to-secondary rounded-xl flex items-center justify-center flex-shrink-0">
+                            <i class="fas fa-robot text-white text-xl"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-semibold text-gray-900">人工智能训练师</h4>
+                            <p class="text-sm text-gray-500">三级</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Professional Certifications -->
+            <div>
+                <h3 class="text-sm font-medium text-gray-400 uppercase tracking-wider mb-4">专业认证</h3>
+                <div class="grid grid-cols-3 gap-4">
+                    <div class="cert-card rounded-xl p-4 text-center">
+                        <div class="w-10 h-12 bg-gray-100 rounded-lg flex items-center justify-center mx-auto mb-3">
+                            <i class="fas fa-lightbulb text-primary"></i>
+                        </div>
+                        <h4 class="font-medium text-gray-900 text-sm">NPDP</h4>
+                        <p class="text-xs text-gray-500">产品经理认证</p>
+                    </div>
+                    <div class="cert-card rounded-xl p-4 text-center">
+                        <div class="w-10 h-12 bg-gray-100 rounded-lg flex items-center justify-center mx-auto mb-3">
+                            <i class="fas fa-sync-alt text-primary"></i>
+                        </div>
+                        <h4 class="font-medium text-gray-900 text-sm">ACP</h4>
+                        <p class="text-xs text-gray-500">敏捷认证</p>
+                    </div>
+                    <div class="cert-card rounded-xl p-4 text-center">
+                        <div class="w-10 h-12 bg-gray-100 rounded-lg flex items-center justify-center mx-auto mb-3">
+                            <i class="fas fa-project-diagram text-primary"></i>
+                        </div>
+                        <h4 class="font-medium text-gray-900 text-sm">PMP</h4>
+                        <p class="text-xs text-gray-500">项目管理</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="py-20 px-6 bg-white">
+        <div class="max-w-4xl mx-auto text-center">
+            <div class="animate-fade-in-up">
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">期待与您交流</h2>
+                <p class="text-gray-500 mb-12">
+                    如果您对B端SaaS产品、AI应用落地或PaaS架构感兴趣，欢迎联系
+                </p>
+
+                <div class="grid md:grid-cols-2 gap-6 max-w-xl mx-auto mb-12">
+                    <!-- Email -->
+                    <a href="mailto:jinjialong97@163.com" class="contact-card rounded-2xl p-6 flex items-center gap-4 text-left hover:border-primary/30 transition-colors">
+                        <div class="w-12 h-12 bg-gray-900 rounded-xl flex items-center justify-center flex-shrink-0">
+                            <i class="fas fa-envelope text-white text-xl"></i>
+                        </div>
+                        <div>
+                            <div class="text-xs text-gray-400 mb-1">邮箱</div>
+                            <div class="text-gray-900 font-medium text-sm">jinjialong97@163.com</div>
+                        </div>
+                    </a>
+
+                    <!-- WeChat -->
+                    <button onclick="showWeChat()" class="contact-card rounded-2xl p-6 flex items-center gap-4 text-left hover:border-primary/30 transition-colors w-full">
+                        <div class="w-12 h-12 bg-[#07C160] rounded-xl flex items-center justify-center flex-shrink-0">
+                            <i class="fab fa-weixin text-white text-xl"></i>
+                        </div>
+                        <div>
+                            <div class="text-xs text-gray-400 mb-1">微信</div>
+                            <div class="text-gray-900 font-medium">jinjldwx</div>
+                        </div>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="py-8 px-6 border-t border-gray-100">
+        <div class="max-w-6xl mx-auto text-center">
+            <p class="text-sm text-gray-400">
+                © 2025 玉泽. All rights reserved.
+            </p>
+        </div>
+    </footer>
+
+    <!-- WeChat Modal -->
+    <div id="wechatModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/50 backdrop-blur-sm">
+        <div class="bg-white rounded-2xl p-8 max-w-sm mx-4 text-center relative">
+            <button onclick="closeWeChat()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600">
+                <i class="fas fa-times text-lg"></i>
+            </button>
+            <div class="w-16 h-16 bg-[#07C160] rounded-2xl flex items-center justify-center mx-auto mb-4">
+                <i class="fab fa-weixin text-white text-2xl"></i>
+            </div>
+            <h3 class="text-lg font-semibold text-gray-900 mb-2">添加微信</h3>
+            <p class="text-gray-500 text-sm mb-4">微信号：jinjldwx</p>
+            <button onclick="copyWeChat()" class="w-full py-3 bg-gray-900 text-white rounded-xl font-medium hover:bg-gray-800 transition-colors">
+                复制微信号
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // Mobile Menu Toggle
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const mobileMenu = document.getElementById('mobileMenu');
+
+        mobileMenuBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+
+        // Close mobile menu when clicking a link
+        mobileMenu.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', () => {
+                mobileMenu.classList.add('hidden');
+            });
+        });
+
+        // Smooth Scroll
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // WeChat Modal
+        function showWeChat() {
+            document.getElementById('wechatModal').classList.remove('hidden');
+            document.getElementById('wechatModal').classList.add('flex');
+        }
+
+        function closeWeChat() {
+            document.getElementById('wechatModal').classList.add('hidden');
+            document.getElementById('wechatModal').classList.remove('flex');
+        }
+
+        function copyWeChat() {
+            navigator.clipboard.writeText('jinjldwx').then(() => {
+                const btn = document.querySelector('#wechatModal button:last-child');
+                const originalText = btn.textContent;
+                btn.textContent = '已复制！';
+                btn.classList.add('bg-green-600');
+                setTimeout(() => {
+                    btn.textContent = originalText;
+                    btn.classList.remove('bg-green-600');
+                }, 2000);
+            });
+        }
+
+        // Close modal on backdrop click
+        document.getElementById('wechatModal').addEventListener('click', (e) => {
+            if (e.target === e.currentTarget) {
+                closeWeChat();
+            }
+        });
+
+        // Intersection Observer for animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.animate-fade-in-up').forEach(el => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(30px)';
+            el.style.transition = 'opacity 0.6s ease-out, transform 0.6s ease-out';
+            observer.observe(el);
+        });
+    </script>
+</body>
+</html>
