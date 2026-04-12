@@ -1,0 +1,19 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git init:*)",
+      "Bash(git config:*)",
+      "Bash(git remote:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git branch:*)",
+      "Bash(git push:*)",
+      "Bash(git pull:*)",
+      "Bash(git stash:*)",
+      "Bash(sed -i 's|\\\\.\\\\./拼图小游戏/|./拼图小游戏/|g' \"C:/Users/Administrator/AI项目/ai-works.html\")",
+      "Bash(sed -i 's|\\\\.\\\\./手势互动网页/|./手势互动网页/|g' \"C:/Users/Administrator/AI项目/ai-works.html\")",
+      "Bash(sed -i 's|\\\\.\\\\./文章总结卡片生成器/|./文章总结卡片生成器/|g' \"C:/Users/Administrator/AI项目/ai-works.html\")",
+      "Bash(sed -i 's|\\\\.\\\\./表格合并工具/|./表格合并工具/|g' \"C:/Users/Administrator/AI项目/ai-works.html\")"
+    ]
+  }
+}
