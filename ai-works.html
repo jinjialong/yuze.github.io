@@ -199,7 +199,13 @@
                     LLM应用
                 </button>
                 <button class="tag-filter px-4 py-2 rounded-full text-sm font-medium" data-filter="prompt">
-                    Prompt工程
+                    Prompt 工程
+                </button>
+                <button class="tag-filter px-4 py-2 rounded-full text-sm font-medium" data-filter="game">
+                    互动游戏
+                </button>
+                <button class="tag-filter px-4 py-2 rounded-full text-sm font-medium" data-filter="tool">
+                    实用工具
                 </button>
             </div>
         </div>
@@ -210,7 +216,7 @@
         <div class="max-w-6xl mx-auto">
             <div id="projectsGrid" class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
                 <!-- AI Work 1: 拼图小游戏 -->
-                <div class="project-card rounded-2xl overflow-hidden card-hover animate-fade-in-up delay-100" data-category="llm">
+                <div class="project-card rounded-2xl overflow-hidden card-hover animate-fade-in-up delay-100" data-categories="game">
                     <div class="h-48 overflow-hidden bg-gradient-to-br from-blue-400/20 to-purple-400/20 flex items-center justify-center">
                         <i class="fas fa-puzzle-piece text-6xl text-primary/40"></i>
                     </div>
@@ -232,7 +238,7 @@
                 </div>
 
                 <!-- AI Work 2: 手势互动网页 -->
-                <div class="project-card rounded-2xl overflow-hidden card-hover animate-fade-in-up delay-200" data-category="agent">
+                <div class="project-card rounded-2xl overflow-hidden card-hover animate-fade-in-up delay-200" data-categories="game">
                     <div class="h-48 overflow-hidden bg-gradient-to-br from-green-400/20 to-teal-400/20 flex items-center justify-center">
                         <i class="fas fa-hand-paper text-6xl text-green-500/40"></i>
                     </div>
@@ -254,7 +260,7 @@
                 </div>
 
                 <!-- AI Work 3: 文章总结卡片生成器 -->
-                <div class="project-card rounded-2xl overflow-hidden card-hover animate-fade-in-up delay-300" data-category="llm">
+                <div class="project-card rounded-2xl overflow-hidden card-hover animate-fade-in-up delay-300" data-categories="agent llm prompt">
                     <div class="h-48 overflow-hidden bg-gradient-to-br from-orange-400/20 to-red-400/20 flex items-center justify-center">
                         <i class="fas fa-file-alt text-6xl text-orange-500/40"></i>
                     </div>
@@ -276,7 +282,7 @@
                 </div>
 
                 <!-- AI Work 4: AI竞品分析基础版 -->
-                <div class="project-card rounded-2xl overflow-hidden card-hover animate-fade-in-up delay-100" data-category="agent">
+                <div class="project-card rounded-2xl overflow-hidden card-hover animate-fade-in-up delay-100" data-categories="agent llm prompt">
                     <div class="h-48 overflow-hidden bg-gradient-to-br from-purple-400/20 to-pink-400/20 flex items-center justify-center">
                         <i class="fas fa-search-dollar text-6xl text-purple-500/40"></i>
                     </div>
@@ -298,7 +304,7 @@
                 </div>
 
                 <!-- AI Work 5: 表格合并工具 -->
-                <div class="project-card rounded-2xl overflow-hidden card-hover animate-fade-in-up delay-200" data-category="agent">
+                <div class="project-card rounded-2xl overflow-hidden card-hover animate-fade-in-up delay-200" data-categories="tool">
                     <div class="h-48 overflow-hidden bg-gradient-to-br from-indigo-400/20 to-blue-400/20 flex items-center justify-center">
                         <i class="fas fa-table text-6xl text-indigo-500/40"></i>
                     </div>
@@ -320,7 +326,7 @@
                 </div>
 
                 <!-- AI Work 6 -->
-                <div class="project-card rounded-2xl overflow-hidden card-hover animate-fade-in-up delay-300" data-category="agent">
+                <div class="project-card rounded-2xl overflow-hidden card-hover animate-fade-in-up delay-300" data-categories="agent">
                     <div class="h-48 overflow-hidden bg-gradient-to-br from-accent/10 to-primary/10 flex items-center justify-center">
                         <i class="fas fa-comments text-6xl text-accent/30"></i>
                     </div>
@@ -380,7 +386,7 @@
 
         // Filter functionality
         const filterButtons = document.querySelectorAll('.tag-filter');
-        const projectCards = document.querySelectorAll('#projectsGrid > div[data-category]');
+        const projectCards = document.querySelectorAll('#projectsGrid > div[data-categories]');
         const emptyState = document.getElementById('emptyState');
 
         filterButtons.forEach(button => {
@@ -393,7 +399,8 @@
                 let visibleCount = 0;
 
                 projectCards.forEach(card => {
-                    if (filter === 'all' || card.dataset.category === filter) {
+                    const categories = card.dataset.categories.split(' ');
+                    if (filter === 'all' || categories.includes(filter)) {
                         card.style.display = 'block';
                         // Re-trigger animation
                         card.style.animation = 'none';
