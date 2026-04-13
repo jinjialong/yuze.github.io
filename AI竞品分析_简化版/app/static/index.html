@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI竞品分析工具</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="app">
+        <header class="header">
+            <h1>AI竞品分析</h1>
+            <button class="btn-primary" id="btnNewAnalysis" onclick="showNewAnalysis()">+ 新建分析</button>
+        </header>
+
+        <div class="main">
+            <aside class="sidebar">
+                <h2>竞品列表</h2>
+                <div id="competitorList" class="competitor-list">
+                    <!-- 竞品列表将在这里动态渲染 -->
+                </div>
+            </aside>
+
+            <main class="content" id="mainContent">
+                <!-- 欢迎面板 -->
+                <div id="welcomePanel" class="panel">
+                    <div class="welcome-content">
+                        <div class="welcome-icon">🔍</div>
+                        <h2>欢迎使用 AI 竞品分析</h2>
+                        <p>请选择左侧的历史报告查看详情，或点击右上角"新建分析"开始竞品分析。</p>
+                    </div>
+                </div>
+
+                <!-- 新建分析表单 -->
+                <div id="newAnalysisForm" class="panel hidden">
+                    <h2>新建分析</h2>
+                    <div class="form-group">
+                        <label>竞品名称</label>
+                        <input type="text" id="competitorName" placeholder="例如：飞书">
+                    </div>
+                    <div class="form-group">
+                        <label>目标URL</label>
+                        <input type="text" id="targetUrl" placeholder="https://www.example.com">
+                    </div>
+                    <button class="btn-primary btn-large" onclick="startAnalysis()">开始分析</button>
+                </div>
+
+                <!-- 进度面板 -->
+                <div id="progressPanel" class="panel hidden">
+                    <h2>分析中...</h2>
+                    <div class="progress-bar">
+                        <div id="progressFill" class="progress-fill" style="width: 0%"></div>
+                    </div>
+                    <div class="progress-text" id="progressText">0%</div>
+
+                    <div class="steps" id="stepsList">
+                        <!-- 步骤状态将在这里渲染 -->
+                    </div>
+                </div>
+
+                <!-- 完成面板 -->
+                <div id="completePanel" class="panel hidden">
+                    <h2>分析完成</h2>
+                    <div class="result-info">
+                        <div class="confidence" id="confidenceBadge">置信度: 高</div>
+                        <div class="duration" id="durationText">耗时: 0秒</div>
+                    </div>
+                    <div class="actions">
+                        <button class="btn-primary" onclick="viewCompletedReport()">查看报告</button>
+                        <button class="btn-secondary" onclick="showNewAnalysis()">新建下一个</button>
+                    </div>
+                </div>
+
+                <!-- 报告展示面板（右侧内嵌展示） -->
+                <div id="reportViewPanel" class="panel hidden">
+                    <div class="report-view-header">
+                        <div class="report-breadcrumb">
+                            <span class="report-name" id="reportName"></span>
+                            <span class="breadcrumb-sep">·</span>
+                            <span class="report-version" id="reportVersion"></span>
+                            <span class="breadcrumb-sep">·</span>
+                            <span class="report-time" id="reportTime"></span>
+                        </div>
+                    </div>
+                    <div class="report-scroll-area">
+                        <div class="report-screenshot" id="reportScreenshot"></div>
+                        <div class="report-content markdown-body" id="reportContent"></div>
+                    </div>
+                </div>
+
+                <!-- 失败面板 -->
+                <div id="errorPanel" class="panel hidden">
+                    <h2>分析失败</h2>
+                    <div class="error-message" id="errorMessage"></div>
+                    <div class="actions">
+                        <button class="btn-secondary" onclick="showNewAnalysis()">重新提交</button>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- 报告列表弹窗 -->
+    <div id="reportListModal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="reportListTitle">历史版本</h3>
+                <button class="btn-close" onclick="closeModal('reportListModal')">×</button>
+            </div>
+            <div class="modal-body">
+                <div id="versionList" class="version-list">
+                    <!-- 版本列表将在这里渲染 -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 错误提示弹窗 -->
+    <div id="errorModal" class="modal hidden">
+        <div class="modal-content modal-small">
+            <div class="modal-header">
+                <h3>提示</h3>
+                <button class="btn-close" onclick="closeModal('errorModal')">×</button>
+            </div>
+            <div class="modal-body">
+                <p id="errorModalText"></p>
+                <div class="modal-actions">
+                    <button class="btn-primary" onclick="closeModal('errorModal')">确定</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/static/app.js"></script>
+</body>
+</html>
