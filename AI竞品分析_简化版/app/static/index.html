@@ -9,12 +9,16 @@
 <body>
     <div class="app">
         <header class="header">
+            <button class="btn-sidebar-toggle" id="sidebarToggle" aria-label="切换侧边栏">
+                <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"></polyline></svg>
+            </button>
             <h1>AI竞品分析</h1>
             <button class="btn-primary" id="btnNewAnalysis" onclick="showNewAnalysis()">+ 新建分析</button>
         </header>
 
         <div class="main">
-            <aside class="sidebar">
+            <div class="sidebar-overlay" id="sidebarOverlay"></div>
+            <aside class="sidebar" id="sidebar">
                 <h2>竞品列表</h2>
                 <div id="competitorList" class="competitor-list">
                     <!-- 竞品列表将在这里动态渲染 -->

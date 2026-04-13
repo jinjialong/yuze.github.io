@@ -178,7 +178,7 @@ function showWelcome() {
 function showNewAnalysis() {
     hideAllPanels();
     document.getElementById('newAnalysisForm').classList.remove('hidden');
-    document.getElementById('btnNewAnalysis').disabled = false;
+    setButtonInProgress(false);
 
     // 清空表单
     document.getElementById('competitorName').value = '';
@@ -220,8 +220,8 @@ async function startAnalysis() {
         return;
     }
 
-    // 禁用新建按钮
-    document.getElementById('btnNewAnalysis').disabled = true;
+    // 设置按钮为进行中状态
+    setButtonInProgress(true);
 
     try {
         const response = await fetch('/api/analyze', {
@@ -239,11 +239,11 @@ async function startAnalysis() {
             startPolling();
         } else {
             showError('启动分析失败');
-            document.getElementById('btnNewAnalysis').disabled = false;
+            setButtonInProgress(false);
         }
     } catch (error) {
         showError('请求失败: ' + error.message);
-        document.getElementById('btnNewAnalysis').disabled = false;
+        setButtonInProgress(false);
     }
 }
 
@@ -327,7 +327,7 @@ function updateStepStatus(steps) {
 function showCompletePanel(result) {
     hideAllPanels();
     document.getElementById('completePanel').classList.remove('hidden');
-    document.getElementById('btnNewAnalysis').disabled = false;
+    setButtonInProgress(false);
 
     const confidenceBadge = document.getElementById('confidenceBadge');
     confidenceBadge.textContent = `置信度: ${result.confidence === 'high' ? '高 ✓' : '低 ⚠️'}`;
@@ -360,9 +360,25 @@ async function viewCompletedReport() {
 function showErrorPanel(error) {
     hideAllPanels();
     document.getElementById('errorPanel').classList.remove('hidden');
-    document.getElementById('btnNewAnalysis').disabled = false;
+    setButtonInProgress(false);
 
     document.getElementById('errorMessage').textContent = error || '分析过程中出现错误，临时文件已自动清理，请重新提交分析';
+}
+
+// 设置按钮为"进行中"状态
+function setButtonInProgress(inProgress) {
+    const btn = document.getElementById('btnNewAnalysis');
+    if (inProgress) {
+        btn.disabled = false;
+        btn.textContent = '⏳ 进行中';
+        btn.classList.add('in-progress');
+        btn.onclick = function() { showProgressPanel(); };
+    } else {
+        btn.disabled = false;
+        btn.textContent = '+ 新建分析';
+        btn.classList.remove('in-progress');
+        btn.onclick = showNewAnalysis;
+    }
 }
 
 // 显示报告列表弹窗
@@ -443,6 +459,55 @@ document.querySelectorAll('.modal').forEach(modal => {
     modal.addEventListener('click', (e) => {
         if (e.target === modal) {
             modal.classList.add('hidden');
+        }
+    });
+});
+
+// ===== Sidebar Toggle =====
+document.addEventListener('DOMContentLoaded', () => {
+    const sidebar = document.getElementById('sidebar');
+    const toggleBtn = document.getElementById('sidebarToggle');
+    const overlay = document.getElementById('sidebarOverlay');
+
+    if (!sidebar || !toggleBtn || !overlay) return;
+
+    const isMobile = () => window.innerWidth <= 768;
+
+    toggleBtn.addEventListener('click', () => {
+        if (isMobile()) {
+            // Mobile: slide in/out as overlay
+            sidebar.classList.toggle('mobile-open');
+            overlay.classList.toggle('visible');
+            toggleBtn.classList.toggle('active');
+        } else {
+            // Desktop: collapse/expand in same layer
+            sidebar.classList.toggle('collapsed');
+            toggleBtn.classList.toggle('active');
+        }
+    });
+
+    // Click overlay to close sidebar on mobile
+    overlay.addEventListener('click', () => {
+        sidebar.classList.remove('mobile-open');
+        overlay.classList.remove('visible');
+        toggleBtn.classList.remove('active');
+    });
+
+    // Reset sidebar state on resize
+    window.addEventListener('resize', () => {
+        if (!isMobile()) {
+            sidebar.classList.remove('mobile-open');
+            overlay.classList.remove('visible');
+            // On desktop, ensure sidebar is visible by default
+            if (!sidebar.classList.contains('collapsed')) {
+                sidebar.style.width = '';
+            }
+        } else {
+            // On mobile, ensure sidebar starts closed
+            if (!sidebar.classList.contains('mobile-open')) {
+                sidebar.classList.remove('mobile-open');
+                overlay.classList.remove('visible');
+            }
         }
     });
 });
