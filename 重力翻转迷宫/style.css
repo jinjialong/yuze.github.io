@@ -1,0 +1,345 @@
+:root {
+  color-scheme: dark;
+  --bg-top: #07131b;
+  --bg-bottom: #10293a;
+  --panel: rgba(7, 16, 23, 0.82);
+  --panel-border: rgba(148, 202, 255, 0.2);
+  --text-main: #f4fbff;
+  --text-soft: #9fb9ca;
+  --accent: #7df2d3;
+  --accent-strong: #17c9a5;
+  --warning: #ff6f61;
+  --wall: #15364c;
+  --wall-edge: #8fd2ff;
+  --canvas-bg: #091723;
+  --shadow: 0 24px 60px rgba(0, 0, 0, 0.35);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: "Space Grotesk", "Noto Sans SC", sans-serif;
+  background:
+    radial-gradient(circle at top, rgba(79, 190, 255, 0.2), transparent 34%),
+    linear-gradient(180deg, var(--bg-top), var(--bg-bottom));
+  color: var(--text-main);
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+  background-size: 28px 28px;
+  mask-image: radial-gradient(circle at center, black 55%, transparent 95%);
+}
+
+.shell {
+  width: min(1100px, calc(100% - 32px));
+  margin: 0 auto;
+  padding: 40px 0 48px;
+}
+
+.hero {
+  margin-bottom: 20px;
+}
+
+.eyebrow {
+  margin: 0 0 8px;
+  font-size: 0.8rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.hero h1 {
+  margin: 0;
+  font-size: clamp(2.4rem, 5vw, 4.5rem);
+  line-height: 0.95;
+}
+
+.intro {
+  width: min(620px, 100%);
+  margin: 14px 0 0;
+  color: var(--text-soft);
+  line-height: 1.7;
+}
+
+.game-card {
+  position: relative;
+  padding: 18px;
+  border: 1px solid var(--panel-border);
+  border-radius: 28px;
+  background: var(--panel);
+  backdrop-filter: blur(18px);
+  box-shadow: var(--shadow);
+}
+
+.hud {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(120px, 1fr));
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.hud-block,
+.hud-actions {
+  min-height: 74px;
+  padding: 14px 16px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.hud-block-wide {
+  grid-column: span 2;
+}
+
+.hud-label {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 0.78rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-soft);
+}
+
+.hud strong {
+  font-size: 1.08rem;
+}
+
+.hud-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.ghost-button,
+.primary-button,
+.gravity-button {
+  border: 0;
+  border-radius: 999px;
+  font: inherit;
+  cursor: pointer;
+  transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
+}
+
+.ghost-button {
+  padding: 12px 16px;
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--text-main);
+}
+
+.ghost-button:hover,
+.ghost-button:focus-visible,
+.primary-button:hover,
+.primary-button:focus-visible,
+.gravity-button:hover,
+.gravity-button:focus-visible {
+  transform: translateY(-1px);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.18);
+}
+
+.primary-button {
+  padding: 14px 24px;
+  background: linear-gradient(135deg, var(--accent), var(--accent-strong));
+  color: #04221c;
+  font-weight: 700;
+}
+
+.stage-wrap {
+  position: relative;
+  overflow: hidden;
+  border-radius: 24px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background:
+    radial-gradient(circle at top, rgba(125, 242, 211, 0.08), transparent 35%),
+    var(--canvas-bg);
+}
+
+canvas {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 16 / 9;
+}
+
+.overlay-panel {
+  position: absolute;
+  inset: 18px;
+  display: none;
+  align-items: flex-start;
+  justify-content: flex-end;
+  flex-direction: column;
+  gap: 12px;
+  padding: 24px;
+  border-radius: 20px;
+  background:
+    linear-gradient(180deg, rgba(1, 8, 13, 0.18), rgba(1, 8, 13, 0.82)),
+    radial-gradient(circle at top right, rgba(125, 242, 211, 0.16), transparent 35%);
+}
+
+.overlay-panel.visible {
+  display: flex;
+}
+
+.panel-kicker {
+  margin: 0;
+  color: var(--accent);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  font-size: 0.75rem;
+}
+
+.overlay-panel h2 {
+  margin: 0;
+  max-width: 360px;
+  font-size: clamp(1.8rem, 3.4vw, 2.8rem);
+  line-height: 1.02;
+}
+
+.panel-copy,
+.panel-list {
+  max-width: 420px;
+  margin: 0;
+  color: var(--text-soft);
+  line-height: 1.7;
+}
+
+.panel-list {
+  padding-left: 18px;
+}
+
+.gravity-pad {
+  width: min(460px, 100%);
+  margin: 18px auto 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: center;
+}
+
+.gravity-middle {
+  display: grid;
+  grid-template-columns: 86px minmax(130px, 1fr) 86px;
+  gap: 12px;
+  width: 100%;
+  align-items: center;
+}
+
+.gravity-button {
+  min-height: 64px;
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--text-main);
+  font-size: 1.65rem;
+  font-weight: 700;
+}
+
+.gravity-button.up,
+.gravity-button.down {
+  width: 86px;
+}
+
+.gravity-indicator {
+  min-height: 64px;
+  padding: 12px 16px;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.04);
+  display: grid;
+  place-items: center;
+  text-align: center;
+}
+
+.gravity-indicator span {
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-soft);
+}
+
+.gravity-indicator strong {
+  margin-top: 4px;
+  font-size: 1.05rem;
+}
+
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  margin-top: 16px;
+  color: var(--text-soft);
+}
+
+.legend span {
+  display: inline-flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.legend-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 999px;
+  display: inline-block;
+}
+
+.legend-dot.ball {
+  background: #ffd166;
+}
+
+.legend-dot.wall {
+  background: #5ca8d8;
+}
+
+.legend-dot.goal {
+  background: #7df2d3;
+}
+
+.legend-dot.spike {
+  background: #ff6f61;
+}
+
+@media (max-width: 820px) {
+  .shell {
+    width: min(100%, calc(100% - 20px));
+    padding-top: 24px;
+  }
+
+  .game-card {
+    padding: 14px;
+    border-radius: 22px;
+  }
+
+  .hud {
+    grid-template-columns: 1fr;
+  }
+
+  .hud-block-wide {
+    grid-column: auto;
+  }
+
+  .hud-actions {
+    justify-content: stretch;
+  }
+
+  .hud-actions .ghost-button {
+    flex: 1;
+  }
+
+  .gravity-middle {
+    grid-template-columns: 74px minmax(110px, 1fr) 74px;
+  }
+
+  .gravity-button.up,
+  .gravity-button.down {
+    width: 74px;
+  }
+}

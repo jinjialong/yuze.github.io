@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>重力翻转迷宫</title>
+  <meta name="description" content="一个可直接部署到 GitHub Pages 的轻量重力翻转迷宫小游戏。">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+  <main class="shell">
+    <section class="hero">
+      <p class="eyebrow">Canvas Puzzle Game</p>
+      <h1>重力翻转迷宫</h1>
+      <p class="intro">
+        你不能直接移动小球，只能翻转世界的重力。让它滚动、下落、避开陷阱，然后抵达终点。
+      </p>
+    </section>
+
+    <section class="game-card">
+      <header class="hud">
+        <div class="hud-block">
+          <span class="hud-label">关卡</span>
+          <strong id="levelLabel">1 / 4</strong>
+        </div>
+        <div class="hud-block">
+          <span class="hud-label">翻转次数</span>
+          <strong id="moveLabel">0</strong>
+        </div>
+        <div class="hud-block hud-block-wide">
+          <span class="hud-label">提示</span>
+          <strong id="statusLabel">先试试方向键，或者点击下面的重力按钮。</strong>
+        </div>
+        <div class="hud-actions">
+          <button id="restartButton" class="ghost-button" type="button">重开</button>
+          <button id="menuButton" class="ghost-button" type="button">回到封面</button>
+        </div>
+      </header>
+
+      <div class="stage-wrap">
+        <canvas id="gameCanvas" width="640" height="360" aria-label="重力翻转迷宫游戏画布"></canvas>
+
+        <div id="startPanel" class="overlay-panel visible">
+          <p class="panel-kicker">最小可玩版</p>
+          <h2>翻转重力，把球送到终点</h2>
+          <ul class="panel-list">
+            <li>总共 12 关，每 4 关难度会明显上一个台阶</li>
+            <li>电脑端：方向键 / WASD</li>
+            <li>手机端：点击下方重力按钮</li>
+            <li>红色尖刺会立刻失败，绿色发光点是终点</li>
+          </ul>
+          <button id="startButton" class="primary-button" type="button">开始游戏</button>
+        </div>
+
+        <div id="finishPanel" class="overlay-panel">
+          <p class="panel-kicker" id="finishKicker">关卡完成</p>
+          <h2 id="finishTitle">继续下一关</h2>
+          <p id="finishText" class="panel-copy">你已经掌握这张地图的节奏了。</p>
+          <button id="nextButton" class="primary-button" type="button">下一关</button>
+        </div>
+      </div>
+
+      <div class="gravity-pad" aria-label="重力控制面板">
+        <button class="gravity-button up" data-dir="up" type="button" aria-label="向上重力">↑</button>
+        <div class="gravity-middle">
+          <button class="gravity-button left" data-dir="left" type="button" aria-label="向左重力">←</button>
+          <div class="gravity-indicator">
+            <span>当前重力</span>
+            <strong id="gravityLabel">向下</strong>
+          </div>
+          <button class="gravity-button right" data-dir="right" type="button" aria-label="向右重力">→</button>
+        </div>
+        <button class="gravity-button down" data-dir="down" type="button" aria-label="向下重力">↓</button>
+      </div>
+
+      <footer class="legend">
+        <span><i class="legend-dot ball"></i> 小球</span>
+        <span><i class="legend-dot wall"></i> 墙体</span>
+        <span><i class="legend-dot goal"></i> 终点</span>
+        <span><i class="legend-dot spike"></i> 尖刺</span>
+      </footer>
+    </section>
+  </main>
+
+  <script src="./game.js"></script>
+</body>
+</html>
